@@ -15,16 +15,36 @@ namespace gl33 = gl33core;
 namespace Video
 {
 
+#ifdef DEBUG
 static void debug_cb(gl33::GLenum source, gl33::GLenum type, gl33::GLuint id,
                      gl33::GLenum severity, gl33::GLsizei length,
                      const gl33::GLchar* message, const void*)
 {
     std::cerr << message << std::endl;
 }
+#endif
 
-Window::Window(int width, int height, const char* title)
+static void KeyCallback(GLFWwindow* window, int key, int scancode,
+                        int action, int mods)
 {
-    EnsureGlfw();
+    if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
+        glfwSetWindowShouldClose(window, true);
+}
+
+Window::Window(const char* title) {
+  EnsureGlfw();
+  GLFWmonitor *monitor = glfwGetPrimaryMonitor();
+  const GLFWvidmode *vidmode = glfwGetVideoMode(monitor);
+  Init(vidmode->width, vidmode->height, monitor, title);
+}
+
+Window::Window(int width, int height, const char* title) {
+  EnsureGlfw();
+  Init(width, height, nullptr, title);
+}
+
+void Window::Init(int width, int height, GLFWmonitor* monitor, const char* title)
+{
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, true);
@@ -32,7 +52,7 @@ Window::Window(int width, int height, const char* title)
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 #endif
 
-    win = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    win = glfwCreateWindow(width, height, title, monitor, nullptr);
     if (!win)
         throw std::runtime_error("boo boo"); // todo
     glfwMakeContextCurrent(win);
@@ -56,6 +76,8 @@ Window::Window(int width, int height, const char* title)
 
     gl33ext::glDebugMessageCallback(debug_cb, nullptr);
 #endif
+
+    glfwSetKeyCallback(win, KeyCallback);
 }
 
 static void err_cb(int, const char* err)
