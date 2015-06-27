@@ -5,8 +5,8 @@
 
 #include <glbinding/callbacks.h>
 #include <glbinding/Binding.h>
-#include <glbinding/gl/gl33core.h>
-#include <glbinding/gl/gl33ext.h>
+#include <glbinding/gl33core/gl.h>
+#include <glbinding/gl33ext/gl.h>
 
 #include "video/window.hpp"
 

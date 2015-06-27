@@ -4,7 +4,7 @@
 
 #include "gl/basic.hpp"
 
-#include <glbinding/gl/gl33core.h>
+#include <glbinding/gl33core/gl.h>
 namespace gl33 = gl33core;
 
 namespace Gl

@@ -5,7 +5,7 @@ namespace GameObjects
 {
 
 Static::Static(Rect<float> rect)
-    : rect{rect},
+    : rect(rect),
       prog{Gl::Shader{gl33::GL_VERTEX_SHADER,
                       "#version 330\n"
                       "in vec2 position;\n"
