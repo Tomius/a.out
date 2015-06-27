@@ -7,16 +7,17 @@ int main()
 {
     //Video::Window win(640, 480, "a.out");
     Video::Window win("a.out");
-    std::vector<std::unique_ptr<GameObjects::GameObject>> vect;
-    vect.push_back(std::make_unique<GameObjects::Static>(
-        Rect<float>{-.5, -.5, .5, .5}));
+
+    GameObjects::Scene scene;
+    scene.EmplaceGameObject<GameObjects::Static>(Rect<float>{-.5, -.5, .5, .5});
+    scene.EmplaceGameObject<GameObjects::Static>(Rect<float>{.8, .8, .1, .15});
+    win.SetScene(&scene);
 
     while (!win.IsClosing())
     {
         glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
-        for (auto& o : vect)
-            o->Draw();
+        scene.Draw();
 
         win.SwapBuffers();
     }

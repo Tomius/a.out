@@ -1,5 +1,6 @@
 #include "config.h"
 
+#include <map>
 #include <iostream>
 #include <stdexcept>
 
@@ -24,17 +25,80 @@ static void debug_cb(gl33::GLenum source, gl33::GLenum type, gl33::GLuint id,
 }
 #endif
 
+// Callbacks
+
+static std::map<GLFWwindow*, GameObjects::Scene*> window2scene;
+
+static GameObjects::Scene* GetScene(GLFWwindow* window)
+{
+    auto it = window2scene.find(window);
+    if (it != window2scene.end())
+    {
+        return it->second;
+    } else {
+        return nullptr;
+    }
+}
+
+static void ScreenResizedCallback(GLFWwindow* window, int width, int height)
+{
+    auto scene = GetScene(window);
+    if (scene)
+        scene->ScreenResized(width, height);
+}
+
 static void KeyCallback(GLFWwindow* window, int key, int scancode,
                         int action, int mods)
 {
-    if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE)
+    if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) // todo
         glfwSetWindowShouldClose(window, true);
+
+    auto scene = GetScene(window);
+    if (scene)
+        scene->KeyAction(key, scancode, action, mods);
 }
+
+static void CharTypedCallback(GLFWwindow* window, unsigned codepoint)
+{
+    auto scene = GetScene(window);
+    if (scene)
+        scene->CharTyped(codepoint);
+}
+
+static void MouseScrolledCallback(GLFWwindow* window, double xoffset,
+                                  double yoffset)
+{
+    auto scene = GetScene(window);
+    if (scene)
+        scene->MouseScrolled(xoffset, yoffset);
+}
+
+static void MouseButtonPressedCallback(GLFWwindow* window, int button,
+                                       int action, int mods)
+{
+    auto scene = GetScene(window);
+    if (scene)
+        scene->MouseButtonPressed(button, action, mods);
+}
+
+static void MouseMovedCallback(GLFWwindow* window, double xpos, double ypos)
+{
+    auto scene = GetScene(window);
+    if (scene)
+        scene->MouseMoved(xpos, ypos);
+}
+
+// Ctors
 
 Window::Window(const char* title) {
   EnsureGlfw();
   GLFWmonitor *monitor = glfwGetPrimaryMonitor();
   const GLFWvidmode *vidmode = glfwGetVideoMode(monitor);
+  glfwWindowHint(GLFW_RED_BITS, vidmode->redBits);
+  glfwWindowHint(GLFW_GREEN_BITS, vidmode->greenBits);
+  glfwWindowHint(GLFW_BLUE_BITS, vidmode->blueBits);
+  glfwWindowHint(GLFW_REFRESH_RATE, vidmode->refreshRate);
+
   Init(vidmode->width, vidmode->height, monitor, title);
 }
 
@@ -77,7 +141,22 @@ void Window::Init(int width, int height, GLFWmonitor* monitor, const char* title
     gl33ext::glDebugMessageCallback(debug_cb, nullptr);
 #endif
 
+    glfwSetFramebufferSizeCallback(win, ScreenResizedCallback);
     glfwSetKeyCallback(win, KeyCallback);
+    glfwSetCharCallback(win, CharTypedCallback);
+    glfwSetScrollCallback(win, MouseScrolledCallback);
+    glfwSetMouseButtonCallback(win, MouseButtonPressedCallback);
+    glfwSetCursorPosCallback(win, MouseMovedCallback);
+}
+
+void Window::SetScene(GameObjects::Scene* scene)
+{
+    window2scene[win] = scene;
+}
+
+GameObjects::Scene* Window::GetScene() const
+{
+    return Video::GetScene(win);
 }
 
 static void err_cb(int, const char* err)

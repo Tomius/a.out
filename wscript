@@ -47,6 +47,7 @@ def build(bld):
     src = [
         'src/main.cpp',
         'src/gl/shader.cpp',
+        'src/game_objects/scene.cpp',
         'src/game_objects/static.cpp',
         'src/video/window.cpp',
     ]
