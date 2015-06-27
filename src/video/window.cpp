@@ -6,6 +6,7 @@
 #include <glbinding/callbacks.h>
 #include <glbinding/Binding.h>
 #include <glbinding/gl/gl33core.h>
+#include <glbinding/gl/gl33ext.h>
 
 #include "video/window.hpp"
 
@@ -13,6 +14,13 @@ namespace gl33 = gl33core;
 
 namespace Video
 {
+
+static void debug_cb(gl33::GLenum source, gl33::GLenum type, gl33::GLuint id,
+                     gl33::GLenum severity, gl33::GLsizei length,
+                     const gl33::GLchar* message, const void*)
+{
+    std::cerr << message << std::endl;
+}
 
 Window::Window(int width, int height, const char* title)
 {
@@ -36,7 +44,7 @@ Window::Window(int width, int height, const char* title)
     {
         gl33::GLenum error;
         while ((error = gl33::glGetError()) != gl33::GL_NO_ERROR)
-            std::cerr << "error: " << f.toString() << " " // todo
+            std::cerr << "error: " << f.function->name() << " " // todo
                       << std::hex << error << std::endl;
     });
 
@@ -45,6 +53,8 @@ Window::Window(int width, int height, const char* title)
         std::cerr << "sigsegv handler " << f.name() << std::endl; // todo
         abort();
     });
+
+    gl33ext::glDebugMessageCallback(debug_cb, nullptr);
 #endif
 }
 

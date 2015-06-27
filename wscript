@@ -46,6 +46,8 @@ def configure(cfg):
 def build(bld):
     src = [
         'src/main.cpp',
+        'src/gl/shader.cpp',
+        'src/game_objects/static.cpp',
         'src/video/window.cpp',
     ]
 
