@@ -1,6 +1,6 @@
 #include <memory>
 #include <vector>
-#include "game_objects/static.hpp"
+#include "game_objects/static_rectangle.hpp"
 #include "video/window.hpp"
 
 int main()
@@ -9,8 +9,11 @@ int main()
     Video::Window win("a.out");
 
     GameObjects::Scene scene;
-    scene.EmplaceGameObject<GameObjects::Static>(Rect<float>{-.5, -.5, .5, .5});
-    scene.EmplaceGameObject<GameObjects::Static>(Rect<float>{.8, .8, .1, .15});
+    using GameObjects::StaticRectangle;
+    scene.EmplaceGameObject<StaticRectangle>(
+        Rect<float>{-.5, -.5, .5, .5}, glm::vec4(1.0f));
+    scene.EmplaceGameObject<StaticRectangle>(
+        Rect<float>{.8, .8, .1, .15}, glm::vec4{0.8f, 0.65f, 0.03f, 1.0f});
     win.SetScene(&scene);
 
     while (!win.IsClosing())

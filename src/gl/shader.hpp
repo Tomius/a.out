@@ -49,6 +49,10 @@ public:
 
     void BindFragDataLocation(gl33::GLuint color, const char* name)
     { gl33::glBindFragDataLocation(Get(), color, name); }
+
+    auto GetUniformLocation(const char* uniform) {
+        return gl33::glGetUniformLocation(Get(), uniform);
+    }
 private:
     template <typename... Rest>
     void Attach(const Shader& sh, Rest&&... rest)

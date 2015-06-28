@@ -90,7 +90,8 @@ static void MouseMovedCallback(GLFWwindow* window, double xpos, double ypos)
 
 // Ctors
 
-Window::Window(const char* title) {
+Window::Window(const char* title)
+{
   EnsureGlfw();
   GLFWmonitor *monitor = glfwGetPrimaryMonitor();
   const GLFWvidmode *vidmode = glfwGetVideoMode(monitor);
@@ -102,9 +103,16 @@ Window::Window(const char* title) {
   Init(vidmode->width, vidmode->height, monitor, title);
 }
 
-Window::Window(int width, int height, const char* title) {
+Window::Window(int width, int height, const char* title)
+{
   EnsureGlfw();
   Init(width, height, nullptr, title);
+}
+
+Window::~Window()
+{
+    window2scene.erase(win);
+    glfwDestroyWindow(win);
 }
 
 void Window::Init(int width, int height, GLFWmonitor* monitor, const char* title)

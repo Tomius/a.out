@@ -32,6 +32,7 @@ def configure(cfg):
     cfg.check_boost()
     cfg.check_cfg(package='glfw3', args='--cflags --libs')
     cfg.check_cxx(header_name='glbinding/Binding.h', lib='glbinding', uselib_store='GLBINDING')
+    cfg.check_cxx(header_name='glm/vec4.hpp')
 
     os = cfg.env.DEST_OS
     cfg.define(os.upper(), 1)
@@ -48,7 +49,8 @@ def build(bld):
         'src/main.cpp',
         'src/gl/shader.cpp',
         'src/game_objects/scene.cpp',
-        'src/game_objects/static.cpp',
+        'src/game_objects/static_rectangle.cpp',
+        'src/gfx/rectangle.cpp',
         'src/video/window.cpp',
     ]
 

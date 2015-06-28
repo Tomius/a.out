@@ -15,7 +15,7 @@ class Window
 public:
     Window(const char* title); // full screen
     Window(int width, int height, const char* title);
-    ~Window() noexcept { glfwDestroyWindow(win); }
+    ~Window() noexcept;
 
     bool IsClosing() const noexcept { return glfwWindowShouldClose(win); }
     void SetClosing(bool c) noexcept { glfwSetWindowShouldClose(win, c); }

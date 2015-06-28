@@ -2,6 +2,8 @@
 #define UUID_407F9AC5_BF7C_4D03_A71E_DBB039E16F76
 #pragma once
 
+#include <glm/vec4.hpp>
+
 #include "rect.hpp"
 #include "gl/buffer.hpp"
 #include "gl/shader.hpp"
@@ -10,20 +12,16 @@
 namespace GameObjects
 {
 
-class Static : public GameObject
+class StaticRectangle : public GameObject
 {
 public:
-    Static(Rect<float> rect);
+    StaticRectangle(Rect<float> rect, glm::vec4 const& color);
 
-    void Draw();
+    void Draw() override;
 
 private:
-    void SetVbo();
-
     Rect<float> rect;
-    Gl::Program prog; // todo: shader cache...
-    Gl::VertexArray vao;
-    Gl::Buffer buf;
+    glm::vec4 color;
 };
 
 }
