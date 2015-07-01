@@ -30,8 +30,9 @@ def configure(cfg):
 
     cfg.check_boost(lib='iostreams')
     cfg.check_cfg(package='glfw3', args='--cflags --libs')
-    cfg.check_cxx(header_name='glbinding/Binding.h', lib='glbinding', uselib_store='GLBINDING')
     cfg.check_cxx(header_name='glm/vec4.hpp')
+
+    cfg.recurse('aliens')
 
     os = cfg.env.DEST_OS
     cfg.define(os.upper(), 1)
@@ -44,6 +45,8 @@ def configure(cfg):
     cfg.write_config_header('src/config.h')
 
 def build(bld):
+    bld.recurse('aliens')
+
     src = [
         'src/main.cpp',
         'src/gl/shader.cpp',
@@ -65,7 +68,8 @@ def build(bld):
     x = bld(features = 'cxx cxxprogram',
             source   = src,
             includes = 'src',
-            uselib   = 'BOOST GLFW3 GLBINDING',
+            uselib   = 'BOOST GLFW3',
+            use      = 'glbinding',
             target   = APPNAME)
 
 from waflib.Task import Task

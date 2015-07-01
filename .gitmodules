@@ -1,0 +1,3 @@
+[submodule "aliens/glbinding"]
+	path = aliens/glbinding
+	url = git://github.com/hpicgs/glbinding.git

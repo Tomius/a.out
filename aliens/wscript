@@ -1,0 +1,16 @@
+# -*- mode: python; encoding: utf-8 -*-
+
+def configure(cfg):
+    cfg.check_cxx(lib='GL')
+    cfg.check_cxx(lib='pthread')
+
+def build(bld):
+    # glbinding
+    bld.stlib(source=
+              bld.path.ant_glob('glbinding/source/glbinding/source/*.cpp')+
+              bld.path.ant_glob('glbinding/source/glbinding/source/gl/*.cpp'),
+              includes='glbinding/source/glbinding/include',
+              export_includes='glbinding/source/glbinding/include',
+              target='glbinding',
+              defines=['GLBINDING_STATIC', 'NDEBUG'],
+              use='GL PTHREAD')
