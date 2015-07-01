@@ -28,7 +28,7 @@ def configure(cfg):
     else:
         cfg.define('NDEBUG', True)
 
-    cfg.check_boost()
+    cfg.check_boost(lib='iostreams')
     cfg.check_cfg(package='glfw3', args='--cflags --libs')
     cfg.check_cxx(header_name='glbinding/Binding.h', lib='glbinding', uselib_store='GLBINDING')
     cfg.check_cxx(header_name='glm/vec4.hpp')
@@ -50,6 +50,11 @@ def build(bld):
         'src/game_objects/scene.cpp',
         'src/game_objects/static_rectangle.cpp',
         'src/gfx/rectangle.cpp',
+        'src/logger/cmdline.cpp',
+        'src/logger/logger.cpp',
+        'src/logger/putter.cpp',
+        'src/misc/exception.cpp',
+        'src/misc/optiongrouper.cpp',
         'src/video/window.cpp',
     ]
 

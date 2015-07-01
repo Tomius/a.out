@@ -1,4 +1,5 @@
 #include <iostream>
+#include "logger/logger.hpp"
 #include "util.hpp"
 #include "gl/shader.hpp"
 
@@ -16,7 +17,7 @@ void Shader::Compile(const char *str)
     {
         auto buf = make_unique<char[]>(length);
         gl33::glGetShaderInfoLog(Get(), length, nullptr, buf.get());
-        std::cerr << buf.get() << std::endl; // todo
+        WARN << "Shader compile log:\n" << buf.get() << std::endl;
 
         gl33::GLint success;
         gl33::glGetShaderiv(Get(), gl33::GL_COMPILE_STATUS, &success);
@@ -38,7 +39,7 @@ void Program::DoLink()
     {
         auto buf = make_unique<char[]>(length);
         gl33::glGetProgramInfoLog(Get(), length, nullptr, buf.get());
-        std::cerr << buf.get() << std::endl; // todo
+        WARN << "Program link log:\n" << buf.get() << std::endl;
 
         gl33::GLint success;
         gl33::glGetProgramiv(Get(), gl33::GL_LINK_STATUS, &success);

@@ -9,6 +9,7 @@
 #include <glbinding/gl33core/gl.h>
 #include <glbinding/gl33ext/gl.h>
 
+#include "logger/logger.hpp"
 #include "video/window.hpp"
 
 namespace gl33 = gl33core;
@@ -21,7 +22,28 @@ static void debug_cb(gl33::GLenum source, gl33::GLenum type, gl33::GLuint id,
                      gl33::GLenum severity, gl33::GLsizei length,
                      const gl33::GLchar* message, const void*)
 {
-    std::cerr << message << std::endl;
+    int lvl;
+    switch (severity)
+    {
+    case gl33ext::GL_DEBUG_SEVERITY_HIGH:
+        lvl = 1;
+        break;
+    case gl33ext::GL_DEBUG_SEVERITY_MEDIUM:
+        lvl = 2;
+        break;
+    case gl33ext::GL_DEBUG_SEVERITY_LOW:
+        lvl = 3;
+        break;
+    case gl33ext::GL_DEBUG_SEVERITY_NOTIFICATION:
+        lvl = 4;
+        break;
+    default:
+        lvl = 5; // ???
+        break;
+    }
+
+    DBG("opengl", lvl) << int(severity) << " " <<
+        message << std::endl;
 }
 #endif
 
@@ -109,7 +131,7 @@ Window::Window(int width, int height, const char* title)
   Init(width, height, nullptr, title);
 }
 
-Window::~Window()
+Window::~Window() noexcept
 {
     window2scene.erase(win);
     glfwDestroyWindow(win);
@@ -131,22 +153,26 @@ void Window::Init(int width, int height, GLFWmonitor* monitor, const char* title
 
     glbinding::Binding::initialize();
 #ifdef DEBUG
-    glbinding::setCallbackMaskExcept(glbinding::CallbackMask::After, { "glGetError" });
-    glbinding::setAfterCallback([](const glbinding::FunctionCall& f)
-    {
-        gl33::GLenum error;
-        while ((error = gl33::glGetError()) != gl33::GL_NO_ERROR)
-            std::cerr << "error: " << f.function->name() << " " // todo
-                      << std::hex << error << std::endl;
-    });
-
     glbinding::setUnresolvedCallback([](const glbinding::AbstractFunction& f)
     {
-        std::cerr << "sigsegv handler " << f.name() << std::endl; // todo
+        ERR << "sigsegv handler " << f.name() << std::endl;
         abort();
     });
 
-    gl33ext::glDebugMessageCallback(debug_cb, nullptr);
+    if (Logger::mgr.IsToDebug("opengl", 1))
+    {
+        glbinding::setCallbackMaskExcept(
+            glbinding::CallbackMask::After, { "glGetError" });
+        glbinding::setAfterCallback([](const glbinding::FunctionCall& f)
+        {
+            gl33::GLenum error;
+            while ((error = gl33::glGetError()) != gl33::GL_NO_ERROR)
+                DBG("opengl", 1) << f.function->name() << " "
+                                 << std::hex << error << std::endl;
+        });
+
+        gl33ext::glDebugMessageCallback(debug_cb, nullptr);
+    }
 #endif
 
     glfwSetFramebufferSizeCallback(win, ScreenResizedCallback);
@@ -169,7 +195,7 @@ GameObjects::Scene* Window::GetScene() const
 
 static void err_cb(int, const char* err)
 {
-    std::cerr << "glfw: " << err << std::endl;
+    ERR << "glfw: " << err << std::endl; // todo
 }
 
 Window::GlfwInitializer::GlfwInitializer()
