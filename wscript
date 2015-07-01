@@ -20,9 +20,8 @@ def configure(cfg):
     cfg.check_cxx(cxxflags='-std=c++14')
     cfg.env.append_value('CXXFLAGS', ['-std=c++14'])
     cfg.env.append_value('CXXFLAGS', cfg.filter_flags([
-        '-stdlib=libc++', '-fcolor-diagnostics', '-Wall', '-Wextra',
-        '-Wno-unused-parameter', '-Wno-dangling-else', '-pedantic', '-Wdocumentation']))
-    cfg.env.append_value('LINKFLAGS', cfg.filter_flags(['-stdlib=libc++']))
+        '-fcolor-diagnostics', '-Wall', '-Wextra', '-Wno-unused-parameter',
+        '-Wno-dangling-else', '-pedantic', '-Wdocumentation']))
 
     if cfg.options.debug:
         cfg.define('DEBUG', True)
