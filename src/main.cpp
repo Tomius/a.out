@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "gfx/pixel.hpp"
+#include "gfx/line.hpp"
 #include "game_objects/static_rectangle.hpp"
 #include "misc/optiongrouper.hpp"
 #include "video/window.hpp"
@@ -37,7 +38,9 @@ int main(int argc, char** argv)
         glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
         scene.Draw();
-        Gfx::Pixel::Draw(glm::vec2(-0.5f, 0.5f), glm::vec4(1.0));
+        Gfx::Pixel::Draw(glm::vec2{-0.5f, 0.5f}, glm::vec4(1.0));
+        Gfx::Line::Draw(glm::vec2{-0.8f, -0.7f}, glm::vec2{+0.8f, -0.9f},
+                        glm::vec4{0.0f, 1.0f, 0.3f, 1.0f});
 
         win->SwapBuffers();
     }

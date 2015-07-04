@@ -9,20 +9,21 @@
 namespace Gfx
 {
 
-class Pixel {
+class Line {
 public:
-    static void Draw(glm::vec2 coord, glm::vec4 const& color);
+    static void Draw(glm::vec2 coord1, glm::vec2 coord2,
+                     glm::vec4 const& color);
 
 private:
-    static Pixel* instance;
+    static Line* instance;
 
     Gl::Program program;
     Gl::VertexArray vao;
 
-    gl33::GLint uloc_pos;
+    gl33::GLint uloc_pos0, uloc_pos1;
     gl33::GLint uloc_color;
 
-    Pixel();
+    Line();
 };
 
 }
