@@ -24,7 +24,6 @@ private:
     gl33::GLint uloc_color;
 
     Circle();
-    void SetVbo();
 };
 
 }
