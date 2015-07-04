@@ -1,9 +1,7 @@
 #include <memory>
 #include <vector>
 
-#include "gfx/pixel.hpp"
-#include "gfx/line.hpp"
-#include "game_objects/static_rectangle.hpp"
+#include "game_objects/static.hpp"
 #include "misc/optiongrouper.hpp"
 #include "video/window.hpp"
 
@@ -16,6 +14,8 @@ static OptionGrouper::BoolSetOption fullscreen_opt{
 
 int main(int argc, char** argv)
 {
+    using namespace GameObjects;
+
     GetOptionGrouper().Run(argc, argv);
 
     std::unique_ptr<Video::Window> win;
@@ -24,12 +24,20 @@ int main(int argc, char** argv)
     else
         win = std::make_unique<Video::Window>(640, 480, "a.out");
 
-    GameObjects::Scene scene;
-    using GameObjects::StaticRectangle;
+    Scene scene;
+
     scene.EmplaceGameObject<StaticRectangle>(
         Rect<float>{-.5, -.5, .5, .5}, glm::vec4(1.0f));
     scene.EmplaceGameObject<StaticRectangle>(
         Rect<float>{.8, .8, .1, .15}, glm::vec4{0.8f, 0.65f, 0.03f, 1.0f});
+    scene.EmplaceGameObject<StaticPixel>(
+        glm::vec2{-0.5f, 0.5f}, glm::vec4(1.0));
+    scene.EmplaceGameObject<StaticLine>(
+        glm::vec2{-0.8f, -0.7f}, glm::vec2{+0.8f, -0.9f},
+        glm::vec4{0.0f, 1.0f, 0.3f, 1.0f});
+    scene.EmplaceGameObject<StaticCircle>(
+        glm::vec2{+0.5f, -0.2f}, 0.2f,
+        glm::vec4{0.0f, 0.1f, 0.9f, 1.0f});
 
     win->SetScene(&scene);
 
@@ -38,9 +46,6 @@ int main(int argc, char** argv)
         glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
         scene.Draw();
-        Gfx::Pixel::Draw(glm::vec2{-0.5f, 0.5f}, glm::vec4(1.0));
-        Gfx::Line::Draw(glm::vec2{-0.8f, -0.7f}, glm::vec2{+0.8f, -0.9f},
-                        glm::vec4{0.0f, 1.0f, 0.3f, 1.0f});
 
         win->SwapBuffers();
     }

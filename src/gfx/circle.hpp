@@ -9,21 +9,21 @@
 namespace Gfx
 {
 
-class Rectangle {
+class Circle {
 public:
-    static void Draw(Rect<float> rect, glm::vec4 const& color);
+    static void Draw(glm::vec2 center, float radius, glm::vec4 const& color);
 
 private:
-    static Rectangle* instance;
+    static Circle* instance;
 
     Gl::Program program;
     Gl::VertexArray vao;
 
-    gl33::GLint uloc_bottom_left;
-    gl33::GLint uloc_size;
+    gl33::GLint uloc_center;
+    gl33::GLint uloc_radius;
     gl33::GLint uloc_color;
 
-    Rectangle();
+    Circle();
     void SetVbo();
 };
 
