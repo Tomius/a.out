@@ -1,5 +1,3 @@
-#ifndef UUID_5CFF6400_2957_4757_BC8F_CB8F2BB64635
-#define UUID_5CFF6400_2957_4757_BC8F_CB8F2BB64635
 #pragma once
 
 namespace Gl
@@ -19,5 +17,3 @@ private:
 };
 
 }
-
-#endif

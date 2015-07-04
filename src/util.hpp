@@ -1,5 +1,3 @@
-#ifndef UUID_DA7D291D_D64E_45A7_B8BA_4B75C2BE8E16
-#define UUID_DA7D291D_D64E_45A7_B8BA_4B75C2BE8E16
 #pragma once
 
 #include <memory>
@@ -19,4 +17,3 @@ inline std::unique_ptr<T> make_unique(size_t n)
     return std::unique_ptr<T>{new typename std::remove_extent<T>::type[n]};
 }
 
-#endif

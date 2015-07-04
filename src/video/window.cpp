@@ -183,14 +183,24 @@ void Window::Init(int width, int height, GLFWmonitor* monitor, const char* title
     glfwSetCursorPosCallback(win, MouseMovedCallback);
 }
 
+GameObjects::Scene* Window::GetScene() const
+{
+    return Video::GetScene(win);
+}
+
 void Window::SetScene(GameObjects::Scene* scene)
 {
     window2scene[win] = scene;
 }
 
-GameObjects::Scene* Window::GetScene() const
-{
-    return Video::GetScene(win);
+glm::ivec2 Window::GetSize() const {
+    glm::ivec2 size;
+    glfwGetWindowSize(win, &size.x, &size.y);
+    return size;
+}
+
+void Window::SetSize(glm::ivec2 size) {
+    glfwSetWindowSize(win, size.x, size.y);
 }
 
 static void err_cb(int, const char* err)

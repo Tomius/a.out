@@ -52,6 +52,7 @@ def build(bld):
         'src/gl/shader.cpp',
         'src/game_objects/scene.cpp',
         'src/game_objects/static_rectangle.cpp',
+        'src/gfx/pixel.cpp',
         'src/gfx/rectangle.cpp',
         'src/logger/cmdline.cpp',
         'src/logger/logger.cpp',

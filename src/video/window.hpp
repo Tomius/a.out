@@ -1,9 +1,8 @@
-#ifndef UUID_998D4729_71F3_4339_8342_0401C8997F12
-#define UUID_998D4729_71F3_4339_8342_0401C8997F12
 #pragma once
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+#include <glm/vec2.hpp>
 
 #include "game_objects/scene.hpp"
 
@@ -22,8 +21,11 @@ public:
 
     void SwapBuffers() noexcept { glfwSwapBuffers(win); glfwPollEvents(); }
 
-    void SetScene(GameObjects::Scene* scene);
     GameObjects::Scene* GetScene() const;
+    void SetScene(GameObjects::Scene* scene);
+
+    glm::ivec2 GetSize() const;
+    void SetSize(glm::ivec2 size);
 
 private:
     GLFWwindow* win;
@@ -39,5 +41,3 @@ private:
 };
 
 }
-
-#endif

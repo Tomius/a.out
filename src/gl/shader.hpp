@@ -1,5 +1,3 @@
-#ifndef UUID_774587A6_8864_41E0_ACDE_CBD8E2344D89
-#define UUID_774587A6_8864_41E0_ACDE_CBD8E2344D89
 #pragma once
 
 #include "gl/basic.hpp"
@@ -65,5 +63,3 @@ private:
 };
 
 }
-
-#endif

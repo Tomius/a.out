@@ -1,5 +1,3 @@
-#ifndef UUID_7C0D7D7E_1D08_11E5_9A21_1697F925EC7B
-#define UUID_7C0D7D7E_1D08_11E5_9A21_1697F925EC7B
 #pragma once
 
 #include <memory>
@@ -27,7 +25,7 @@ public:
     T* EmplaceGameObject(Args&&... args)
     {
         T* ptr = new T{std::forward<Args>(args)...};
-        game_objects.push_back (std::unique_ptr<T>{ptr});
+        game_objects.push_back(std::unique_ptr<T>{ptr});
         return ptr;
     }
 
@@ -38,6 +36,4 @@ private:
 };
 
 }
-
-#endif
 

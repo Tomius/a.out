@@ -1,5 +1,3 @@
-#ifndef UUID_9F960B11_BFBD_41D4_8E3D_397344F57B00
-#define UUID_9F960B11_BFBD_41D4_8E3D_397344F57B00
 #pragma once
 
 #include "gl/basic.hpp"
@@ -53,5 +51,3 @@ public:
 };
 
 }
-
-#endif

@@ -1,6 +1,7 @@
 #include <memory>
 #include <vector>
 
+#include "gfx/pixel.hpp"
 #include "game_objects/static_rectangle.hpp"
 #include "misc/optiongrouper.hpp"
 #include "video/window.hpp"
@@ -28,6 +29,7 @@ int main(int argc, char** argv)
         Rect<float>{-.5, -.5, .5, .5}, glm::vec4(1.0f));
     scene.EmplaceGameObject<StaticRectangle>(
         Rect<float>{.8, .8, .1, .15}, glm::vec4{0.8f, 0.65f, 0.03f, 1.0f});
+
     win->SetScene(&scene);
 
     while (!win->IsClosing())
@@ -35,6 +37,7 @@ int main(int argc, char** argv)
         glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
         scene.Draw();
+        Gfx::Pixel::Draw(glm::vec2(-0.5f, 0.5f), glm::vec4(1.0));
 
         win->SwapBuffers();
     }

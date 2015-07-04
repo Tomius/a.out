@@ -44,7 +44,7 @@ public:
     /**
      * Set debug level for a specified module.
      * @param mod name of the module.
-     * @paran lvl new debug level.
+     * @param lvl new debug level.
      */
     inline void SetLvl(const std::string mod, int lvl)
     { dbg_map[mod] = lvl; }

@@ -9,22 +9,21 @@
 namespace Gfx
 {
 
-class Rectangle {
+class Pixel {
 public:
-    static void Draw(Rect<float> rect, glm::vec4 const& color);
+    static void Draw(glm::vec2 coord, glm::vec4 const& color);
 
 private:
-    static Rectangle* instance;
+    static Pixel* instance;
 
     Gl::Program program;
     Gl::VertexArray vao;
     Gl::Buffer buffer;
 
-    gl33::GLint uloc_bottom_left;
-    gl33::GLint uloc_size;
+    gl33::GLint uloc_pos;
     gl33::GLint uloc_color;
 
-    Rectangle();
+    Pixel();
     void SetVbo();
 };
 

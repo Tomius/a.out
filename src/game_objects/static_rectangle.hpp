@@ -1,5 +1,3 @@
-#ifndef UUID_407F9AC5_BF7C_4D03_A71E_DBB039E16F76
-#define UUID_407F9AC5_BF7C_4D03_A71E_DBB039E16F76
 #pragma once
 
 #include <glm/vec4.hpp>
@@ -25,5 +23,3 @@ private:
 };
 
 }
-
-#endif
