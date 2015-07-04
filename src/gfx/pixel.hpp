@@ -17,14 +17,11 @@ private:
     static Pixel* instance;
 
     Gl::Program program;
-    Gl::VertexArray vao;
-    Gl::Buffer buffer;
 
     gl33::GLint uloc_pos;
     gl33::GLint uloc_color;
 
     Pixel();
-    void SetVbo();
 };
 
 }
