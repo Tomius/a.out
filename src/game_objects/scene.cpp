@@ -5,7 +5,7 @@ using GameObjects::Scene;
 
 Scene::Scene() : camera{*EmplaceGameObject<Video::Camera>()}
 {
-
+    scene = this;
 }
 
 void Scene::Step(double dt)
