@@ -60,6 +60,7 @@ def build(bld):
         'src/logger/putter.cpp',
         'src/misc/exception.cpp',
         'src/misc/optiongrouper.cpp',
+        'src/video/camera.cpp',
         'src/video/window.cpp',
     ]
 

@@ -1,6 +1,12 @@
 #include "game_objects/scene.hpp"
+#include "video/camera.hpp"
 
 using GameObjects::Scene;
+
+Scene::Scene() : camera{*EmplaceGameObject<Video::Camera>()}
+{
+
+}
 
 void Scene::Step(double dt)
 {
@@ -14,10 +20,10 @@ void Scene::Draw()
         game_objects[i]->Draw();
 }
 
-void Scene::ScreenResized(int width, int height)
+void Scene::ScreenResized(glm::ivec2 size)
 {
     for (size_t i = 0; i < game_objects.size(); ++i)
-        game_objects[i]->ScreenResized(width, height);
+        game_objects[i]->ScreenResized(size);
 }
 
 void Scene::KeyAction(int key, int scancode, int action, int mods)
@@ -32,10 +38,10 @@ void Scene::CharTyped(unsigned codepoint)
         game_objects[i]->CharTyped(codepoint);
 }
 
-void Scene::MouseScrolled(double xoffset, double yoffset)
+void Scene::MouseScrolled(glm::dvec2 offset)
 {
     for (size_t i = 0; i < game_objects.size(); ++i)
-        game_objects[i]->MouseScrolled(xoffset, yoffset);
+        game_objects[i]->MouseScrolled(offset);
 }
 
 void Scene::MouseButtonPressed(int button, int action, int mods)
@@ -44,10 +50,10 @@ void Scene::MouseButtonPressed(int button, int action, int mods)
         game_objects[i]->MouseButtonPressed(button, action, mods);
 }
 
-void Scene::MouseMoved(double xpos, double ypos)
+void Scene::MouseMoved(glm::dvec2 pos)
 {
     for (size_t i = 0; i < game_objects.size(); ++i)
-        game_objects[i]->MouseMoved(xpos, ypos);
+        game_objects[i]->MouseMoved(pos);
 }
 
 

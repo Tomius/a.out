@@ -19,11 +19,12 @@ Circle::Circle()
                   ");\n"
                   "uniform vec2 center;\n"
                   "uniform float radius;\n"
+                  "uniform mat3 mvp;\n"
                   "out vec2 pos;\n"
                   "void main()\n"
                   "{\n"
                   "    pos = center + radius*data[gl_VertexID];\n"
-                  "    gl_Position = vec4(pos, 0, 1);\n"
+                  "    gl_Position = vec4((mvp*vec3(pos,1)).xy, 0, 1);\n"
                   "}\n"
               },
               Gl::Shader{gl33::GL_FRAGMENT_SHADER,
@@ -45,13 +46,16 @@ Circle::Circle()
     uloc_center = program.GetUniformLocation("center");
     uloc_radius = program.GetUniformLocation("radius");
     uloc_color = program.GetUniformLocation("color");
+    uloc_mvp = program.GetUniformLocation("mvp");
 
     assert(uloc_center != -1);
     assert(uloc_radius != -1);
     assert(uloc_color != -1);
+    assert(uloc_mvp != -1);
 }
 
-void Circle::Draw(glm::vec2 center, float radius, glm::vec4 const& color)
+void Circle::Draw(glm::vec2 center, float radius, glm::vec4 const& color,
+                  glm::mat3 const& mvp)
 {
     if (instance == nullptr) {
         instance = new Circle();
@@ -62,5 +66,7 @@ void Circle::Draw(glm::vec2 center, float radius, glm::vec4 const& color)
     gl33::glUniform2fv(instance->uloc_center, 1, glm::value_ptr(center));
     gl33::glUniform1f(instance->uloc_radius, radius);
     gl33::glUniform4fv(instance->uloc_color, 1, glm::value_ptr(color));
+    gl33::glUniformMatrix3fv(instance->uloc_mvp, 1,
+                             gl33::GL_FALSE, glm::value_ptr(mvp));
     gl33::glDrawArrays(gl33::GL_TRIANGLE_FAN, 0, 4);
 }

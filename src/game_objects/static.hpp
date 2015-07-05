@@ -2,6 +2,7 @@
 
 #include <functional>
 #include "game_objects/game_object.hpp"
+#include "video/camera.hpp"
 
 #include "gfx/circle.hpp"
 #include "gfx/line.hpp"
@@ -17,7 +18,7 @@ class Static : public GameObject
 public:
     template<typename... Args>
     Static(Args&&... args) : draw_func([&]() {
-        T::Draw(std::forward<Args>(args)...);
+        T::Draw(std::forward<Args>(args)..., GetScene().GetCamera().GetMatrix());
     }) {}
 
     void Draw() override {

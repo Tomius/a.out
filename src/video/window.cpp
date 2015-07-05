@@ -64,9 +64,10 @@ static GameObjects::Scene* GetScene(GLFWwindow* window)
 
 static void ScreenResizedCallback(GLFWwindow* window, int width, int height)
 {
+    gl33::glViewport(0, 0, width, height);
     auto scene = GetScene(window);
     if (scene)
-        scene->ScreenResized(width, height);
+        scene->ScreenResized(glm::ivec2{width, height});
 }
 
 static void KeyCallback(GLFWwindow* window, int key, int scancode,
@@ -92,7 +93,7 @@ static void MouseScrolledCallback(GLFWwindow* window, double xoffset,
 {
     auto scene = GetScene(window);
     if (scene)
-        scene->MouseScrolled(xoffset, yoffset);
+        scene->MouseScrolled(glm::dvec2{xoffset, yoffset});
 }
 
 static void MouseButtonPressedCallback(GLFWwindow* window, int button,
@@ -107,7 +108,7 @@ static void MouseMovedCallback(GLFWwindow* window, double xpos, double ypos)
 {
     auto scene = GetScene(window);
     if (scene)
-        scene->MouseMoved(xpos, ypos);
+        scene->MouseMoved(glm::dvec2{xpos, ypos});
 }
 
 // Ctors
@@ -191,6 +192,7 @@ GameObjects::Scene* Window::GetScene() const
 void Window::SetScene(GameObjects::Scene* scene)
 {
     window2scene[win] = scene;
+    scene->ScreenResized(GetSize());
 }
 
 glm::ivec2 Window::GetSize() const {
