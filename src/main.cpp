@@ -25,8 +25,8 @@ int main(int argc, char** argv)
         win = std::make_unique<Video::Window>(640, 480, "a.out");
 
     Scene scene;
-    scene.GetCamera().lookAt = glm::vec2{5, 5};
-    scene.GetCamera().ysize = 4;
+    scene.GetCamera().viewport_center = glm::vec2{5, 5};
+    scene.GetCamera().viewport_size = 10;
 
     scene.EmplaceGameObject<StaticRectangle>(
         Rect<float>{2, 3.5, 2, 2}, glm::vec4(1.0f));

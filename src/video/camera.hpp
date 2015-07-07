@@ -11,15 +11,17 @@ namespace Video
 
 class Camera : public GameObjects::GameObject {
 public:
-    glm::vec2 lookAt;
+    enum class ViewportBehavior {
+        kFixWidth, kFixHeight, kDynamic
+    };
 
-    // Half of the window's height in world coordinates. The width will be
-    // determined automatically from the window's ascpect ratio.
-    float ysize = 1.0;
+    glm::vec2 viewport_center;
+    float viewport_size = 2.0f;
+    ViewportBehavior viewport_behavior = ViewportBehavior::kDynamic;
 
     glm::mat3 GetMatrix() const;
-    Rect<float> GetRect() const;
-
+    Rect<float> GetViewport() const;
+    glm::vec2 GetViewportDimensions() const;
     void ScreenResized(glm::ivec2 size) override;
 
 private:
