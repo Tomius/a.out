@@ -32,7 +32,7 @@ public:
     {
         T* ptr = new T{std::forward<Args>(args)...};
         ptr->scene = this;
-        game_objects.push_back(std::unique_ptr<T>{ptr});
+        game_objects.emplace_back(ptr);
         return ptr;
     }
 
