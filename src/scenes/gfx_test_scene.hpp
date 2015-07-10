@@ -2,6 +2,7 @@
 
 #include "game_objects/static.hpp"
 #include "game_objects/scene.hpp"
+#include "gl/texture.hpp"
 
 namespace Scenes
 {
@@ -14,8 +15,11 @@ public:
         GetCamera().viewport_center = glm::vec2{5, 5};
         GetCamera().viewport_size = 10;
 
+        Gl::Texture tex;
+        tex.Bind();
+        tex.LoadImage("test.jpg");
         EmplaceGameObject<StaticRectangle>(
-            Rect<float>{2, 3.5, 2, 2}, glm::vec4(1.0f));
+            Rect<float>{2, 3.5, 2, 2}, std::move(tex), glm::vec4(1.0f));
         EmplaceGameObject<StaticRectangle>(
             Rect<float>{7, 7, 0.5f, 1}, glm::vec4{0.8f, 0.65f, 0.03f, 1.0f});
         EmplaceGameObject<StaticPixel>(

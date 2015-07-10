@@ -20,6 +20,16 @@ public:
         T::Draw(args..., GetScene().GetCamera().GetMatrix());
     }) {}
 
+    // ezzel valamit kurvara kezdeni kene
+    Static(Rect<float> rect, Gl::Texture&& tex, glm::vec4 color)
+    {
+        auto ptex = std::make_shared<Gl::Texture>(std::move(tex));
+        draw_func = [=]()
+        {
+            T::Draw(rect, *ptex, color, GetScene().GetCamera().GetMatrix());
+        };
+    }
+
     void Draw() override {
         draw_func();
     }
