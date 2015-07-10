@@ -16,8 +16,6 @@ public:
                      glm::mat3 const& mvp = glm::mat3{});
 
 private:
-    static Circle* instance;
-
     Gl::Program program;
     Gl::VertexArray vao;
 
@@ -27,6 +25,8 @@ private:
     gl33::GLint uloc_mvp;
 
     Circle();
+
+    static Circle& GetInstance();
 };
 
 }

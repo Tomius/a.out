@@ -3,10 +3,9 @@
 
 #include "gfx/circle.hpp"
 #include "gl/shader.hpp"
+#include "misc/exception.hpp"
 
 using Gfx::Circle;
-
-Circle* Circle::instance;
 
 Circle::Circle()
     : program{Gl::Shader{gl33::GL_VERTEX_SHADER,
@@ -48,25 +47,27 @@ Circle::Circle()
     uloc_color = program.GetUniformLocation("color");
     uloc_mvp = program.GetUniformLocation("mvp");
 
-    assert(uloc_center != -1);
-    assert(uloc_radius != -1);
-    assert(uloc_color != -1);
-    assert(uloc_mvp != -1);
+    ASSERT(uloc_center != -1);
+    ASSERT(uloc_radius != -1);
+    ASSERT(uloc_color != -1);
+    ASSERT(uloc_mvp != -1);
 }
 
 void Circle::Draw(glm::vec2 center, float radius, glm::vec4 const& color,
                   glm::mat3 const& mvp)
 {
-    if (instance == nullptr) {
-        instance = new Circle();
-    }
-
-    instance->program.Use();
-    instance->vao.Bind();
-    gl33::glUniform2fv(instance->uloc_center, 1, glm::value_ptr(center));
-    gl33::glUniform1f(instance->uloc_radius, radius);
-    gl33::glUniform4fv(instance->uloc_color, 1, glm::value_ptr(color));
-    gl33::glUniformMatrix3fv(instance->uloc_mvp, 1,
+    GetInstance().program.Use();
+    GetInstance().vao.Bind();
+    gl33::glUniform2fv(GetInstance().uloc_center, 1, glm::value_ptr(center));
+    gl33::glUniform1f(GetInstance().uloc_radius, radius);
+    gl33::glUniform4fv(GetInstance().uloc_color, 1, glm::value_ptr(color));
+    gl33::glUniformMatrix3fv(GetInstance().uloc_mvp, 1,
                              gl33::GL_FALSE, glm::value_ptr(mvp));
     gl33::glDrawArrays(gl33::GL_TRIANGLE_FAN, 0, 4);
+}
+
+Circle& Circle::GetInstance()
+{
+    static Circle circle;
+    return circle;
 }

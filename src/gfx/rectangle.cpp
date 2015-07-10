@@ -3,10 +3,9 @@
 
 #include "gfx/rectangle.hpp"
 #include "gl/shader.hpp"
+#include "misc/exception.hpp"
 
 using Gfx::Rectangle;
-
-Rectangle* Rectangle::instance;
 
 Rectangle::Rectangle()
     : program{Gl::Shader{gl33::GL_VERTEX_SHADER,
@@ -71,17 +70,13 @@ Rectangle::Rectangle()
 void Rectangle::Draw(Rect<float> rect, Gl::Texture& tex, glm::vec4 const& color,
                      glm::mat3 const& mvp)
 {
-    if (instance == nullptr) {
-        instance = new Rectangle();
-    }
-
-    instance->program.Use();
-    instance->vao.Bind();
+    GetInstance().program.Use();
+    GetInstance().vao.Bind();
     tex.Bind();
-    gl33::glUniform2fv(instance->uloc_bottom_left, 1, &rect.x);
-    gl33::glUniform2fv(instance->uloc_size, 1, &rect.width);
-    gl33::glUniform4fv(instance->uloc_color, 1, glm::value_ptr(color));
-    gl33::glUniformMatrix3fv(instance->uloc_mvp, 1,
+    gl33::glUniform2fv(GetInstance().uloc_bottom_left, 1, &rect.x);
+    gl33::glUniform2fv(GetInstance().uloc_size, 1, &rect.width);
+    gl33::glUniform4fv(GetInstance().uloc_color, 1, glm::value_ptr(color));
+    gl33::glUniformMatrix3fv(GetInstance().uloc_mvp, 1,
                              gl33::GL_FALSE, glm::value_ptr(mvp));
     gl33::glDrawArrays(gl33::GL_TRIANGLE_FAN, 0, 4);
 }
@@ -89,6 +84,11 @@ void Rectangle::Draw(Rect<float> rect, Gl::Texture& tex, glm::vec4 const& color,
 void Rectangle::Draw(Rect<float> rect, const glm::vec4& color,
                      const glm::mat3& mvp)
 {
-    if (!instance) instance = new Rectangle();
-    Draw(rect, instance->tex, color, mvp);
+    Draw(rect, GetInstance().tex, color, mvp);
+}
+
+Rectangle& Rectangle::GetInstance()
+{
+    static Rectangle rectangle;
+    return rectangle;
 }

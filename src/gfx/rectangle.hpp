@@ -21,8 +21,6 @@ public:
                      const glm::mat3& mvp = glm::mat3{});
 
 private:
-    static Rectangle* instance;
-
     Gl::Program program;
     Gl::VertexArray vao;
     Gl::Texture tex;
@@ -34,6 +32,8 @@ private:
     gl33::GLint uloc_tex;
 
     Rectangle();
+
+    static Rectangle& GetInstance();
 };
 
 }

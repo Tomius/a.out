@@ -16,7 +16,8 @@ class Static : public GameObject
 {
 public:
     template<typename... Args>
-    Static(Args&&... args) : draw_func([=]() {
+    Static(Args&&... args) : draw_func([=]()
+    {
         T::Draw(args..., GetScene().GetCamera().GetMatrix());
     }) {}
 
