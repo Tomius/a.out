@@ -5,15 +5,24 @@
 #include "misc/optiongrouper.hpp"
 #include "video/window.hpp"
 
+#include "physics/rigidbody.h"
+#include "physics/boundingbox.h"
+#include "physics/boundingcircle.h"
+#include "physics/world.hpp"
+
 static bool fullscreen;
 
 // todo: remove before release :D
 static OptionGrouper::Group foo_group{GetOptionGrouper(), "foo"};
 static OptionGrouper::BoolSetOption fullscreen_opt{
-    foo_group, fullscreen, true, "fullscreen", "guess what"};
+    foo_group, fullscreen, true, "fullscreen", "guess what"
+};
 
 int main(int argc, char** argv)
 {
+    RigidBody thingy;
+    thingy.AddBounder(BoundingBox());
+
     using namespace GameObjects;
 
     GetOptionGrouper().Run(argc, argv);
