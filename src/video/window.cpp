@@ -54,8 +54,7 @@ static std::map<GLFWwindow*, GameObjects::Scene*> window2scene;
 static GameObjects::Scene* GetScene(GLFWwindow* window)
 {
     auto it = window2scene.find(window);
-    if (it != window2scene.end())
-    {
+    if (it != window2scene.end()) {
         return it->second;
     } else {
         return nullptr;

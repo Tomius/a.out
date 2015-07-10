@@ -28,7 +28,7 @@ public:
 
 private:
     friend class Scene;
-    Scene *scene;
+    Scene *scene = nullptr;
 };
 
 inline GameObject::~GameObject() = default;

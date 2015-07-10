@@ -1,7 +1,8 @@
 #include <memory>
 #include <vector>
 
-#include "game_objects/static.hpp"
+#include "scenes/gfx_test_scene.hpp"
+#include "scenes/main_scene.hpp"
 #include "misc/optiongrouper.hpp"
 #include "video/window.hpp"
 
@@ -33,29 +34,21 @@ int main(int argc, char** argv)
     else
         win = std::make_unique<Video::Window>(640, 480, "a.out");
 
-    Scene scene;
-    scene.GetCamera().lookAt = glm::vec2{5, 5};
-    scene.GetCamera().ysize = 4;
-
-    scene.EmplaceGameObject<StaticRectangle>(
-        Rect<float>{2, 3.5, 2, 2}, glm::vec4(1.0f));
-    scene.EmplaceGameObject<StaticRectangle>(
-        Rect<float>{7, 7, 0.5f, 1}, glm::vec4{0.8f, 0.65f, 0.03f, 1.0f});
-    scene.EmplaceGameObject<StaticPixel>(
-        glm::vec2{2, 7}, glm::vec4(1.0));
-    scene.EmplaceGameObject<StaticLine>(
-        glm::vec2{1, 3}, glm::vec2{9, 2},
-        glm::vec4{0.0f, 1.0f, 0.3f, 1.0f});
-    scene.EmplaceGameObject<StaticCircle>(
-        glm::vec2{8, 4}, 1,
-        glm::vec4{0.0f, 0.1f, 0.9f, 1.0f});
-
+    Scenes::GfxTestScene scene;
+    //Scenes::MainScene scene;
     win->SetScene(&scene);
 
+
+    double last_time = glfwGetTime(), current_time, dt;
     while (!win->IsClosing())
     {
         glClear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
+        current_time = glfwGetTime();
+        dt = current_time - last_time;
+        last_time = current_time;
+
+        scene.Step(dt);
         scene.Draw();
 
         win->SwapBuffers();

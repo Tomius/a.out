@@ -16,8 +16,6 @@ public:
                      glm::mat3 const& mvp = glm::mat3{});
 
 private:
-    static Pixel* instance;
-
     Gl::Program program;
     Gl::VertexArray vao;
 
@@ -26,6 +24,8 @@ private:
     gl33::GLint uloc_mvp;
 
     Pixel();
+
+    static Pixel& GetInstance();
 };
 
 }

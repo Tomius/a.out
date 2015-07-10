@@ -3,10 +3,9 @@
 
 #include "gfx/pixel.hpp"
 #include "gl/shader.hpp"
+#include "misc/exception.hpp"
 
 using Gfx::Pixel;
-
-Pixel* Pixel::instance;
 
 Pixel::Pixel()
     : program{Gl::Shader{gl33::GL_VERTEX_SHADER,
@@ -34,23 +33,25 @@ Pixel::Pixel()
     uloc_color = program.GetUniformLocation("color");
     uloc_mvp = program.GetUniformLocation("mvp");
 
-    assert(uloc_pos != -1);
-    assert(uloc_color != -1);
-    assert(uloc_mvp != -1);
+    ASSERT(uloc_pos != -1);
+    ASSERT(uloc_color != -1);
+    ASSERT(uloc_mvp != -1);
 }
 
 void Pixel::Draw(glm::vec2 coord, glm::vec4 const& color,
                  glm::mat3 const& mvp)
 {
-    if (instance == nullptr) {
-        instance = new Pixel();
-    }
-
-    instance->program.Use();
-    instance->vao.Bind();
-    gl33::glUniform2fv(instance->uloc_pos, 1, glm::value_ptr(coord));
-    gl33::glUniform4fv(instance->uloc_color, 1, glm::value_ptr(color));
-    gl33::glUniformMatrix3fv(instance->uloc_mvp, 1,
+    GetInstance().program.Use();
+    GetInstance().vao.Bind();
+    gl33::glUniform2fv(GetInstance().uloc_pos, 1, glm::value_ptr(coord));
+    gl33::glUniform4fv(GetInstance().uloc_color, 1, glm::value_ptr(color));
+    gl33::glUniformMatrix3fv(GetInstance().uloc_mvp, 1,
                              gl33::GL_FALSE, glm::value_ptr(mvp));
     gl33::glDrawArrays(gl33::GL_POINTS, 0, 1);
+}
+
+Pixel& Pixel::GetInstance()
+{
+    static Pixel pixel;
+    return pixel;
 }
