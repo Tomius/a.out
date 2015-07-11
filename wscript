@@ -23,6 +23,8 @@ def configure(cfg):
         '-fcolor-diagnostics', '-Wall', '-Wextra', '-Wno-unused-parameter',
         '-Wno-dangling-else', '-pedantic', '-Wdocumentation']))
 
+    cfg.define('GLM_FORCE_RADIANS', True)
+
     if cfg.options.debug:
         cfg.define('DEBUG', True)
     else:
@@ -52,8 +54,6 @@ def build(bld):
         'src/gl/shader.cpp',
         'src/gl/texture.cpp',
         'src/game_objects/scene.cpp',
-        'src/gfx/line.cpp',
-        'src/gfx/circle.cpp',
         'src/logger/cmdline.cpp',
         'src/logger/logger.cpp',
         'src/logger/putter.cpp',

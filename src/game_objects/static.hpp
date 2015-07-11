@@ -31,6 +31,14 @@ public:
             T::Draw(rect, *ptex, GetScene().GetCamera().GetMatrix());
         };
     }
+    Static(glm::vec2 a, float b, Gfx::TextureMaterial&& tex)
+    {
+        auto ptex = std::make_shared<Gfx::TextureMaterial>(std::move(tex));
+        draw_func = [=]()
+        {
+            T::Draw(a, b, *ptex, GetScene().GetCamera().GetMatrix());
+        };
+    }
 
     void Draw() override {
         draw_func();

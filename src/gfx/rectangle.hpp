@@ -16,7 +16,7 @@ class Rectangle {
 public:
     template <typename Material>
     static void Draw(Rect<float> rect, const Material& material,
-                     glm::mat3 const& mvp = glm::mat3{})
+                     const glm::mat3& mvp = glm::mat3{})
     {
         RectangleImpl<Material>::Draw(rect, material, mvp);
     }
@@ -32,7 +32,7 @@ private:
             auto& inst = GetInstance();
             inst.program.Use();
             inst.vao.Bind();
-            material.UploadUniforms(inst.program);
+            material.Update(inst.program);
             gl33::glUniform2fv(inst.uloc_bottom_left, 1, &rect.x);
             gl33::glUniform2fv(inst.uloc_size, 1, &rect.width);
             gl33::glUniformMatrix3fv(inst.uloc_mvp, 1,
@@ -50,17 +50,11 @@ private:
         RectangleImpl()
             : program{Gl::Shader{gl33::GL_VERTEX_SHADER,
                   "#version 330 core\n"
-                  "const vec2 data[4] = vec2[](\n"
+                  "const vec2 position[4] = vec2[](\n"
                   "    vec2(0, 0),\n"
                   "    vec2(0, 1),\n"
                   "    vec2(1, 1),\n"
                   "    vec2(1, 0)\n"
-                  ");\n"
-                  "const vec2 coord[4] = vec2[](\n"
-                  "    vec2(0, 1),\n"
-                  "    vec2(0, 0),\n"
-                  "    vec2(1, 0),\n"
-                  "    vec2(1, 1)\n"
                   ");\n"
                   "uniform vec2 bottom_left;\n"
                   "uniform vec2 size;\n"
@@ -68,8 +62,9 @@ private:
                   "out vec2 texcoord;\n"
                   "void main()\n"
                   "{\n"
-                  "    vec2 pos = bottom_left + size*data[gl_VertexID];\n"
-                  "    texcoord = coord[gl_VertexID];\n"
+                  "    vec2 pos = position[gl_VertexID];\n"
+                  "    texcoord = vec2(pos.x, 1 - pos.y);\n"
+                  "    pos = bottom_left + size*pos;\n"
                   "    gl_Position = vec4((mvp*vec3(pos,1)).xy, 0, 1);\n"
                   "}\n"
               },

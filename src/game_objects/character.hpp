@@ -1,10 +1,11 @@
 #pragma once
 
-#include <iostream>
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
 #include "gfx/circle.hpp"
 #include "gfx/rectangle.hpp"
+#include "gfx/material/color_material.hpp"
 #include "physics/rigidbody.hpp"
 
 namespace GameObjects
@@ -20,7 +21,7 @@ public:
     }
 
     void Draw() override {
-        Gfx::Circle::Draw(position, radius, glm::vec4(1.0f),
+        Gfx::Circle::Draw(position, radius, Gfx::ColorMaterial{glm::vec4(1.0f)},
                           GetScene().GetCamera().GetMatrix());
     }
 

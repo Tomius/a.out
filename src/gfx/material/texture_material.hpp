@@ -24,11 +24,8 @@ public:
         return shader;
     }
 
-    void UploadUniforms(const Gl::Program& program) const {
-        auto uloc_tex = program.GetUniformLocation("TextureMaterial_tex");
-        ASSERT(uloc_tex != -1);
+    void Update(const Gl::Program& program) const {
         tex.Bind();
-        gl33::glUniform1i(uloc_tex, 0);
     }
 
 private:

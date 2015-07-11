@@ -4,7 +4,7 @@
 #include "game_objects/scene.hpp"
 #include "game_objects/character.hpp"
 
-#include "gfx/material/constant_color_material.hpp"
+#include "gfx/material/color_material.hpp"
 
 namespace Scenes
 {
@@ -23,7 +23,7 @@ public:
 
             EmplaceGameObject<StaticRectangle>(
                 Rect<float>{(float)i, 0, 1, -1},
-                Gfx::ConstantColorMaterial{color});
+                Gfx::ColorMaterial{color});
         }
 
         EmplaceGameObject<Character>();
