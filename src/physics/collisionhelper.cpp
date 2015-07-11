@@ -1,4 +1,4 @@
-#include "collisionhelper.h"
+#include "collisionhelper.hpp"
 
 Manifold Collide(RigidBody& first, RigidBody& second) {
     Manifold m;

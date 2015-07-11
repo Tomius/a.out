@@ -8,7 +8,7 @@ Scene::Scene() : camera{*EmplaceGameObject<Video::Camera>()}
     scene = this;
 }
 
-void Scene::Step(double dt)
+void Scene::Step(float dt)
 {
     for (size_t i = 0; i < game_objects.size(); ++i)
         game_objects[i]->Step(dt);

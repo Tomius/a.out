@@ -16,7 +16,7 @@ class Scene : GameObject
 {
 public:
     Scene();
-    void Step(double dt) override;
+    void Step(float dt) override;
     void Draw() override;
 
     // Callbacks

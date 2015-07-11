@@ -12,7 +12,7 @@ class GameObject
 public:
     virtual ~GameObject() = 0;
 
-    virtual void Step(double dt) {}
+    virtual void Step(float dt) {}
     virtual void Draw() {}
 
     // Callbacks

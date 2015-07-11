@@ -3,9 +3,9 @@
 #include <glm/vec2.hpp>
 #include <vector>
 
-#include "rigidbody.h"
-#include "boundingbox.h"
-#include "boundingcircle.h"
+#include "rigidbody.hpp"
+#include "boundingbox.hpp"
+#include "boundingcircle.hpp"
 
 class Contact
 {
@@ -14,7 +14,7 @@ public:
   glm::vec2 normal;
   float penetration = 0;
 };
- 
+
 class Manifold
 {
 public:

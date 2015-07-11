@@ -5,54 +5,61 @@
 #include <GLFW/glfw3.h>
 #include "gfx/circle.hpp"
 #include "gfx/rectangle.hpp"
-#include "physics/physics_state.hpp"
+#include "physics/rigidbody.hpp"
 
 namespace GameObjects
 {
 
-class Character : public GameObject
+class Character : public GameObject, public RigidBody
 {
+    float radius = 0.5f;
 public:
-    Physics::PhysicsState state;
-
     Character() {
-        state.ApplyForceField(Physics::kGravity);
+        inverse_mass = 1.0f;
+        ApplyForce(glm::vec2{0, -9.81f});
     }
 
     void Draw() override {
-        glm::vec2 pos(state.pos + glm::dvec2(0, 0.5));
-        Gfx::Circle::Draw(pos, 0.5f, glm::vec4(1.0f),
+        Gfx::Circle::Draw(position, radius, glm::vec4(1.0f),
                           GetScene().GetCamera().GetMatrix());
     }
 
-    void Step(double dt) override {
-        state.Step(dt);
-        GetScene().GetCamera().viewport_center = state.pos;
+    void Step(float dt) override {
+        RigidBody::Step(dt);
+        GetScene().GetCamera().viewport_center = position;
 
-        bool in_air = state.pos.y != 0;
+        bool in_air = position.y > radius;
         const float max_speed = 8;
         const float move_force = in_air ? 4 : 8;
-        const float friction_force = in_air ? 0 : 4;
+        const float friction_force = in_air ? 1 : 4;
 
         if (a_pressed && !d_pressed) {
-            if (-state.speed.x < max_speed) {
-                state.ApplyForce({-move_force, 0.0f});
+            if (-velocity.x < max_speed) {
+                ApplyImpulse(glm::vec2{-move_force, 0.0f} * dt);
             }
         } else if (d_pressed && !a_pressed) {
-            if (state.speed.x < max_speed) {
-                state.ApplyForce({move_force, 0.0f});
+            if (velocity.x < max_speed) {
+                ApplyImpulse(glm::vec2{move_force, 0.0f} * dt);
             }
         } else {
-            float speed_abs = std::abs(state.speed.x);
-            float speed_sign = state.speed.x / speed_abs;
+            float speed_abs = std::abs(velocity.x);
+            float speed_sign = velocity.x / speed_abs;
             if (speed_abs > 0.01f) {
-                state.ApplyForce({-speed_sign * friction_force, 0.0f});
+                ApplyImpulse(glm::vec2{-speed_sign * friction_force, 0.0f} * dt);
+            }
+        }
+
+        bool in_ground = position.y < radius;
+        if (in_ground) {
+            position.y = radius;
+            if (velocity.y < 0) {
+                velocity.y = 0;
             }
         }
     }
 
     void KeyAction(int key, int scancode, int action, int mods) override {
-        bool in_air = state.pos.y != 0;
+        bool in_air = position.y > radius;
 
         if (action == GLFW_PRESS) {
             switch (key) {
@@ -64,7 +71,7 @@ public:
                     break;
                 case GLFW_KEY_SPACE:
                     if (!in_air) {
-                        state.ApplyImpulse({0.0f, 6.0f});
+                        ApplyImpulse({0.0f, 6.0f});
                     }
                     break;
             }

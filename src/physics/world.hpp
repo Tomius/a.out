@@ -2,8 +2,8 @@
 
 #include <vector>
 #include <map>
-#include "objectlayer.h"
-#include "rigidbody.h"
+#include "objectlayer.hpp"
+#include "rigidbody.hpp"
 
 
 template <unsigned layerno>

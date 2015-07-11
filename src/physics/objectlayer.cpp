@@ -1,6 +1,5 @@
-#include "objectlayer.h"
-
-#include "collisionhelper.h"
+#include "objectlayer.hpp"
+#include "collisionhelper.hpp"
 
 void ObjectLayer::CollideWith(ObjectLayer& other) {
     for(auto& first : objects) {

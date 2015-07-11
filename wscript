@@ -64,8 +64,6 @@ def build(bld):
         'src/video/camera.cpp',
         'src/video/window.cpp',
         'src/physics/rigidbody.cpp',
-        'src/physics/boundingbox.cpp',
-        'src/physics/boundingcircle.cpp',
         'src/physics/collisionhelper.cpp',
         'src/physics/objectlayer.cpp',
     ]

@@ -6,11 +6,6 @@
 #include "misc/optiongrouper.hpp"
 #include "video/window.hpp"
 
-#include "physics/rigidbody.h"
-#include "physics/boundingbox.h"
-#include "physics/boundingcircle.h"
-#include "physics/world.hpp"
-
 static bool fullscreen;
 
 // todo: remove before release :D
@@ -34,8 +29,8 @@ int main(int argc, char** argv)
     else
         win = std::make_unique<Video::Window>(640, 480, "a.out");
 
-    Scenes::GfxTestScene scene;
-    //Scenes::MainScene scene;
+    //Scenes::GfxTestScene scene;
+    Scenes::MainScene scene;
     win->SetScene(&scene);
 
 
