@@ -54,7 +54,6 @@ def build(bld):
         'src/game_objects/scene.cpp',
         'src/gfx/line.cpp',
         'src/gfx/circle.cpp',
-        'src/gfx/rectangle.cpp',
         'src/logger/cmdline.cpp',
         'src/logger/logger.cpp',
         'src/logger/putter.cpp',

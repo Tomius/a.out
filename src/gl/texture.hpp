@@ -29,7 +29,7 @@ public:
     using BasicManagedObject::BasicManagedObject;
     Texture();
 
-    void Bind(gl33::GLenum target = gl33::GL_TEXTURE_2D)
+    void Bind(gl33::GLenum target = gl33::GL_TEXTURE_2D) const
     { glBindTexture(target, Get()); }
 
     void LoadImage(const std::string& fname);

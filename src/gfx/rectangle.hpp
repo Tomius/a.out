@@ -2,6 +2,7 @@
 
 #include <glm/vec4.hpp>
 #include <glm/matrix.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "rect.hpp"
 #include "gl/buffer.hpp"
@@ -13,27 +14,95 @@ namespace Gfx
 
 class Rectangle {
 public:
-    static void Draw(Rect<float> rect, glm::vec4 const& color,
-                     glm::mat3 const& mvp = glm::mat3{});
-
-    static void Draw(Rect<float> rect, Gl::Texture& tex,
-                     const glm::vec4& color = glm::vec4{1,1,1,1},
-                     const glm::mat3& mvp = glm::mat3{});
+    template <typename Material>
+    static void Draw(Rect<float> rect, const Material& material,
+                     glm::mat3 const& mvp = glm::mat3{})
+    {
+        RectangleImpl<Material>::Draw(rect, material, mvp);
+    }
 
 private:
-    Gl::Program program;
-    Gl::VertexArray vao;
-    Gl::Texture tex;
+    template <typename Material>
+    class RectangleImpl
+    {
+    public:
+        static void Draw(Rect<float> rect, const Material& material,
+                         const glm::mat3& mvp)
+        {
+            auto& inst = GetInstance();
+            inst.program.Use();
+            inst.vao.Bind();
+            material.UploadUniforms(inst.program);
+            gl33::glUniform2fv(inst.uloc_bottom_left, 1, &rect.x);
+            gl33::glUniform2fv(inst.uloc_size, 1, &rect.width);
+            gl33::glUniformMatrix3fv(inst.uloc_mvp, 1,
+                                     gl33::GL_FALSE, glm::value_ptr(mvp));
+            gl33::glDrawArrays(gl33::GL_TRIANGLE_FAN, 0, 4);
+        }
+    private:
+        Gl::Program program;
+        Gl::VertexArray vao;
 
-    gl33::GLint uloc_bottom_left;
-    gl33::GLint uloc_size;
-    gl33::GLint uloc_color;
-    gl33::GLint uloc_mvp;
-    gl33::GLint uloc_tex;
+        gl33::GLint uloc_bottom_left;
+        gl33::GLint uloc_size;
+        gl33::GLint uloc_mvp;
 
-    Rectangle();
+        RectangleImpl()
+            : program{Gl::Shader{gl33::GL_VERTEX_SHADER,
+                  "#version 330 core\n"
+                  "const vec2 data[4] = vec2[](\n"
+                  "    vec2(0, 0),\n"
+                  "    vec2(0, 1),\n"
+                  "    vec2(1, 1),\n"
+                  "    vec2(1, 0)\n"
+                  ");\n"
+                  "const vec2 coord[4] = vec2[](\n"
+                  "    vec2(0, 1),\n"
+                  "    vec2(0, 0),\n"
+                  "    vec2(1, 0),\n"
+                  "    vec2(1, 1)\n"
+                  ");\n"
+                  "uniform vec2 bottom_left;\n"
+                  "uniform vec2 size;\n"
+                  "uniform mat3 mvp;\n"
+                  "out vec2 texcoord;\n"
+                  "void main()\n"
+                  "{\n"
+                  "    vec2 pos = bottom_left + size*data[gl_VertexID];\n"
+                  "    texcoord = coord[gl_VertexID];\n"
+                  "    gl_Position = vec4((mvp*vec3(pos,1)).xy, 0, 1);\n"
+                  "}\n"
+              },
+              Gl::Shader{gl33::GL_FRAGMENT_SHADER,
+                  "#version 330 core\n"
+                  "in vec2 texcoord;\n"
+                  "out vec4 col;\n"
+                  "vec4 GetColor(vec2 texcoord);\n"
+                  "void main()\n"
+                  "{\n"
+                  "    col = GetColor(texcoord);\n"
+                  "}\n"
+              },
+              Material::GetShader()}
+        {
+            program.Use();
+            program.BindFragDataLocation(0, "col");
+            uloc_bottom_left = program.GetUniformLocation("bottom_left");
+            uloc_size = program.GetUniformLocation("size");
+            uloc_mvp = program.GetUniformLocation("mvp");
 
-    static Rectangle& GetInstance();
+            ASSERT(uloc_bottom_left != -1);
+            ASSERT(uloc_size != -1);
+            ASSERT(uloc_mvp != -1);
+        }
+
+
+        static RectangleImpl& GetInstance()
+        {
+            static RectangleImpl rect;
+            return rect;
+        }
+    };
 };
 
 }

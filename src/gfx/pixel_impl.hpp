@@ -5,11 +5,11 @@
 #include "gl/shader.hpp"
 #include "misc/exception.hpp"
 
-template<typename Material>
-using PixelImpl = Gfx::Pixel::PixelImpl<Material>;
+namespace Gfx
+{
 
 template<typename Material>
-PixelImpl<Material>::PixelImpl()
+Pixel::PixelImpl<Material>::PixelImpl()
     : program{Gl::Shader{gl33::GL_VERTEX_SHADER,
                   "#version 330\n"
                   "uniform vec2 pos;\n"
@@ -40,8 +40,8 @@ PixelImpl<Material>::PixelImpl()
 }
 
 template<typename Material>
-void PixelImpl<Material>::Draw(glm::vec2 coord, const Material& material,
-                               glm::mat3 const& mvp)
+void Pixel::PixelImpl<Material>::Draw(glm::vec2 coord, const Material& material,
+                                      glm::mat3 const& mvp)
 {
     GetInstance().program.Use();
     GetInstance().vao.Bind();
@@ -53,8 +53,10 @@ void PixelImpl<Material>::Draw(glm::vec2 coord, const Material& material,
 }
 
 template<typename Material>
-PixelImpl<Material>& PixelImpl<Material>::GetInstance()
+Pixel::PixelImpl<Material>& Pixel::PixelImpl<Material>::GetInstance()
 {
     static PixelImpl<Material> pixel;
     return pixel;
+}
+
 }

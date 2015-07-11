@@ -7,6 +7,7 @@
 #include "gfx/line.hpp"
 #include "gfx/pixel.hpp"
 #include "gfx/rectangle.hpp"
+#include "gfx/material/texture_material.hpp"
 
 namespace GameObjects
 {
@@ -22,12 +23,12 @@ public:
     }) {}
 
     // ezzel valamit kurvara kezdeni kene
-    Static(Rect<float> rect, Gl::Texture&& tex, glm::vec4 color)
+    Static(Rect<float> rect, Gfx::TextureMaterial&& tex)
     {
-        auto ptex = std::make_shared<Gl::Texture>(std::move(tex));
+        auto ptex = std::make_shared<Gfx::TextureMaterial>(std::move(tex));
         draw_func = [=]()
         {
-            T::Draw(rect, *ptex, color, GetScene().GetCamera().GetMatrix());
+            T::Draw(rect, *ptex, GetScene().GetCamera().GetMatrix());
         };
     }
 
