@@ -12,20 +12,34 @@ namespace Gfx
 
 class Pixel {
 public:
-    static void Draw(glm::vec2 coord, glm::vec4 const& color,
-                     glm::mat3 const& mvp = glm::mat3{});
+    template <typename Material>
+    static void Draw(glm::vec2 coord, const Material& material,
+                     const glm::mat3& mvp = glm::mat3{}) {
+        PixelImpl<Material>::Draw(coord, material, mvp);
+    }
 
 private:
-    Gl::Program program;
-    Gl::VertexArray vao;
+    template<typename Material>
+    class PixelImpl {
+    public:
+        static void Draw(glm::vec2 coord, const Material& material,
+                         const glm::mat3& mvp);
 
-    gl33::GLint uloc_pos;
-    gl33::GLint uloc_color;
-    gl33::GLint uloc_mvp;
+    private:
+        Gl::Program program;
+        Gl::VertexArray vao;
 
-    Pixel();
+        gl33::GLint uloc_pos;
+        gl33::GLint uloc_color;
+        gl33::GLint uloc_mvp;
 
-    static Pixel& GetInstance();
+        PixelImpl();
+
+        static PixelImpl& GetInstance();
+    };
+
 };
 
 }
+
+#include "pixel_impl.hpp"

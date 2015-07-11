@@ -52,7 +52,6 @@ def build(bld):
         'src/gl/shader.cpp',
         'src/gl/texture.cpp',
         'src/game_objects/scene.cpp',
-        'src/gfx/pixel.cpp',
         'src/gfx/line.cpp',
         'src/gfx/circle.cpp',
         'src/gfx/rectangle.cpp',

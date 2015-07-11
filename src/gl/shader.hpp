@@ -41,14 +41,14 @@ public:
         DoLink();
     }
 
-    void Use() { gl33::glUseProgram(Get()); }
-    auto GetAttribLocation(const char* attr)
+    void Use() const { gl33::glUseProgram(Get()); }
+    auto GetAttribLocation(const char* attr) const
     { return gl33::glGetAttribLocation(Get(), attr); }
 
     void BindFragDataLocation(gl33::GLuint color, const char* name)
     { gl33::glBindFragDataLocation(Get(), color, name); }
 
-    auto GetUniformLocation(const char* uniform) {
+    auto GetUniformLocation(const char* uniform) const {
         return gl33::glGetUniformLocation(Get(), uniform);
     }
 private:
