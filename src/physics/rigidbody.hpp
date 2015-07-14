@@ -19,14 +19,11 @@ public:
     float angular_velocity = 0;
     float angular_acceleration = 0;
 
-    float staticFriction;
-    float dynamicFriction;
-    float restitution;
+    float restitution = 0.7f;
 
     std::vector<BoundingBox> bboxes;
     std::vector<BoundingCircle> bcircles;
 
-    void Step(float dt);
     glm::mat3 GetMatrix() const;
 
     void AddBounder(BoundingBox);

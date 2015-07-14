@@ -24,4 +24,5 @@ private:
 public:
     Manifold(RigidBody* first, RigidBody* second);
     void ApplyImpulse();
+    //void PositionalCorrection();
 };

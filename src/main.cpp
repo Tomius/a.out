@@ -29,8 +29,8 @@ int main(int argc, char** argv)
     else
         win = std::make_unique<Video::Window>(640, 480, "a.out");
 
-    Scenes::GfxTestScene scene;
-    //Scenes::MainScene scene;
+    //Scenes::GfxTestScene scene;
+    Scenes::MainScene scene;
     win->SetScene(&scene);
 
 

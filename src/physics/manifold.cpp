@@ -1,3 +1,4 @@
+#include <iostream>
 #include "manifold.hpp"
 
 bool Collide(Contact* contact, BoundingCircle first, BoundingCircle second) {
@@ -115,13 +116,8 @@ bool Collide(Contact* contact, BoundingBox first, BoundingCircle second) {
 
     // Collision normal needs to be flipped to point outside if circle was
     // inside the AABB
-    if (inside) {
-        contact->normal = -n;
-        contact->penetration = r + d;
-    } else {
-        contact->normal = n;
-        contact->penetration = r + d;
-    }
+    contact->normal = (inside ? -normal : normal) / d;
+    contact->penetration = r + d;
 
     return true;
 }
@@ -134,13 +130,15 @@ bool Collide(Contact* contact, BoundingCircle first, BoundingBox second) {
 
 Manifold::Manifold(RigidBody* first, RigidBody* second)
         : first(first), second(second) {
+    if (first == second || first->inverse_mass + second->inverse_mass == 0.0f) {
+        return;
+    }
+
     Contact c;
     for (auto& bc : first->bcircles) {
         for (auto& sbc : second->bcircles) {
-            if (&bc != &sbc) {
-                if (Collide(&c, bc, sbc)) {
-                    contacts.push_back(c);
-                }
+            if (Collide(&c, bc, sbc)) {
+                contacts.push_back(c);
             }
         }
         for(auto& sbc : second->bboxes) {
@@ -150,6 +148,11 @@ Manifold::Manifold(RigidBody* first, RigidBody* second)
         }
     }
     for(auto& bc : first->bboxes) {
+        for (auto& sbc : second->bcircles) {
+            if (Collide(&c, bc, sbc)) {
+                contacts.push_back(c);
+            }
+        }
         for(auto& sbc : second->bboxes) {
             if (Collide(&c, bc, sbc)) {
                 contacts.push_back(c);
@@ -160,7 +163,6 @@ Manifold::Manifold(RigidBody* first, RigidBody* second)
 
 
 void Manifold::ApplyImpulse() {
-    // TODO
     for (auto& contact : contacts) {
         // Calculate relative velocity
         glm::vec2 rv = second->velocity - first->velocity;
@@ -183,14 +185,17 @@ void Manifold::ApplyImpulse() {
         glm::vec2 impulse = j * contact.normal;
         first->ApplyImpulse(-impulse);
         second->ApplyImpulse(impulse);
-
-        // Positional correction
-        const float k_slop = 0.05f; // Penetration allowance
-        const float percent = 0.4f; // Penetration percentage to correct
-        glm::vec2 correction = (std::max(contact.penetration - k_slop, 0.0f)
-                                / (first->inverse_mass + second->inverse_mass))
-                                * contact.normal * percent;
-        first->position -= correction * first->inverse_mass;
-        second->position += correction * second->inverse_mass;
     }
 }
+
+// void Manifold::PositionalCorrection() {
+//     for (auto& contact : contacts) {
+//         const float k_slop = 0.05f; // Penetration allowance
+//         const float percent = 0.4f; // Penetration percentage to correct
+//         glm::vec2 correction = (std::max(contact.penetration - k_slop, 0.0f)
+//                                 / (first->inverse_mass + second->inverse_mass))
+//                                 * contact.normal * percent;
+//         first->position -= correction * first->inverse_mass;
+//         second->position += correction * second->inverse_mass;
+//     }
+// }

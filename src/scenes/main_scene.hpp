@@ -5,14 +5,15 @@
 #include "game_objects/character.hpp"
 
 #include "gfx/material/color_material.hpp"
+#include "physics/phy_scene.hpp"
 
 namespace Scenes
 {
 
-class MainScene : public GameObjects::Scene
+class MainScene : public GameObjects::Scene, public PhyScene
 {
 public:
-    MainScene() {
+    MainScene() : ground(new RigidBody()) {
         using namespace GameObjects;
         GetCamera().viewport_center = glm::vec2{0, 1};
         GetCamera().viewport_size = 10;
@@ -26,8 +27,20 @@ public:
                 Gfx::ColorMaterial{color});
         }
 
-        EmplaceGameObject<Character>();
+        ground->bboxes.push_back({glm::vec2{-500, -2}, glm::vec2{500, 0}});
+        AddRigidBody(ground.get());
+
+        AddRigidBody(EmplaceGameObject<Character>());
+        AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{3.0f, 3.0f}, 1.0f));
+        AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{-4.0f, 4.0f}, 0.3f));
     }
+
+    void Step(float dt) override {
+        Scene::Step(dt);
+        PhyScene::Step(dt);
+    }
+private:
+    std::unique_ptr<RigidBody> ground;
 };
 
 }

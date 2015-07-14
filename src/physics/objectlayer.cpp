@@ -4,7 +4,7 @@
 void ObjectLayer::CollideWith(ObjectLayer& other) {
     for(auto& first : objects) {
         for(auto& second : other.objects) {
-            Manifold m(&first, &second);
+            Manifold m(first, second);
             m.ApplyImpulse();
         }
     }

@@ -64,6 +64,7 @@ def build(bld):
         'src/physics/rigidbody.cpp',
         'src/physics/manifold.cpp',
         'src/physics/objectlayer.cpp',
+        'src/physics/phy_scene.cpp',
     ]
 
     x = VersionTask(env=bld.env)

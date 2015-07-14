@@ -5,6 +5,6 @@
 
 class ObjectLayer {
 public:
-    std::vector<RigidBody> objects;
+    std::vector<RigidBody*> objects;
     void CollideWith(ObjectLayer&);
 };

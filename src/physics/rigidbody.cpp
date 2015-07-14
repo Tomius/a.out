@@ -8,14 +8,6 @@ void RigidBody::AddBounder(BoundingCircle bcircle) {
     bcircles.push_back(bcircle);
 }
 
-void RigidBody::Step(float dt) {
-    velocity += acceleration * dt;
-    position += velocity * dt;
-
-    angular_velocity += angular_acceleration * dt;
-    orientation += angular_velocity * dt;
-}
-
 glm::mat3 RigidBody::GetMatrix() const {
     float c = std::cos(orientation);
     float s = std::sin(orientation);

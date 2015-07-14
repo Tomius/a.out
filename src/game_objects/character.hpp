@@ -3,33 +3,22 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include "gfx/circle.hpp"
-#include "gfx/rectangle.hpp"
-#include "gfx/material/color_material.hpp"
-#include "physics/rigidbody.hpp"
+#include "random_ball.hpp"
 
 namespace GameObjects
 {
 
-class Character : public GameObject, public RigidBody
-{
-    float radius = 0.5f;
+class Character : public RandomBall {
 public:
-    Character() {
-        inverse_mass = 1.0f;
-        ApplyForce(glm::vec2{0, -9.81f});
-    }
-
-    void Draw() override {
-        Gfx::Circle::Draw(position, radius, Gfx::ColorMaterial{glm::vec4(1.0f)},
-                          GetScene().GetCamera().GetMatrix());
-    }
+    Character() : RandomBall (glm::vec2{0, 0.5f}, 0.5f,
+                              glm::vec4{0.0f, 0.6f, 0.8f, 1.0f}) {}
 
     void Step(float dt) override {
-        RigidBody::Step(dt);
+        RandomBall::Step(dt);
+
         GetScene().GetCamera().viewport_center = position;
 
-        bool in_air = position.y > radius;
+        bool in_air = position.y > radius + 0.01f;
         const float max_speed = 8;
         const float move_force = in_air ? 4 : 8;
         const float friction_force = in_air ? 1 : 4;
@@ -49,18 +38,10 @@ public:
                 ApplyImpulse(glm::vec2{-speed_sign * friction_force, 0.0f} * dt);
             }
         }
-
-        bool in_ground = position.y < radius;
-        if (in_ground) {
-            position.y = radius;
-            if (velocity.y < 0) {
-                velocity.y = 0;
-            }
-        }
     }
 
     void KeyAction(int key, int scancode, int action, int mods) override {
-        bool in_air = position.y > radius;
+        bool in_air = position.y > radius + 0.01f;
 
         if (action == GLFW_PRESS) {
             switch (key) {
