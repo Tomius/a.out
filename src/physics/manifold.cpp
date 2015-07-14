@@ -286,15 +286,3 @@ void Manifold::ApplyImpulse() {
         second->ApplyImpulse(frictionImpulse);
     }
 }
-
-// void Manifold::PositionalCorrection() {
-//     for (auto& contact : contacts) {
-//         const float k_slop = 0.05f; // Penetration allowance
-//         const float percent = 0.4f; // Penetration percentage to correct
-//         glm::vec2 correction = (std::max(contact.penetration - k_slop, 0.0f)
-//                                 / (first->inverse_mass + second->inverse_mass))
-//                                 * contact.normal * percent;
-//         first->position -= correction * first->inverse_mass;
-//         second->position += correction * second->inverse_mass;
-//     }
-// }

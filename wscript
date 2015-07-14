@@ -63,7 +63,6 @@ def build(bld):
         'src/video/window.cpp',
         'src/physics/rigidbody.cpp',
         'src/physics/manifold.cpp',
-        'src/physics/objectlayer.cpp',
         'src/physics/phy_scene.cpp',
     ]
 

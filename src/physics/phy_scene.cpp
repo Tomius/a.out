@@ -9,21 +9,15 @@ void PhyScene::Step(float dt) {
         IntegrateForces(rbody, dt);
     }
 
-    std::vector<Manifold> manifolds;
-    for(size_t i = 0; i < rbodies.size(); i++) {
-        for(size_t j = i+1; j < rbodies.size(); j++) {
-            manifolds.emplace_back(rbodies[i], rbodies[j]);
-            manifolds.back().ApplyImpulse();
+    for (size_t i = 0; i < rbodies.size(); i++) {
+        for (size_t j = i+1; j < rbodies.size(); j++) {
+            Manifold(rbodies[i], rbodies[j]).ApplyImpulse();
         }
     }
 
     for (RigidBody* rbody : rbodies) {
         IntegrateVelocities(rbody, dt);
     }
-
-    // for (Manifold& m : manifolds) {
-    //     m.PositionalCorrection();
-    // }
 }
 
 void PhyScene::AddRigidBody(RigidBody* body) {
