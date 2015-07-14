@@ -63,9 +63,15 @@ Contact Collide(BoundingBox first, BoundingBox second) {
                 contact.normal = glm::vec2(1, 0);
             contact.penetration = overlap.x;
 
-            float dy = std::min(first_extent.y, second_extent.y);
-            contact.contacts[0] = first_pos + glm::vec2{first_extent.x, +dy};
-            contact.contacts[1] = first_pos + glm::vec2{first_extent.x, -dy};
+            if (first_extent.y < second_extent.y) {
+                float sgn = second_pos.x > first_pos.x ? 1.0f : -1.0f;
+                contact.contacts[0] = first_pos + glm::vec2{sgn * first_extent.x, +first_extent.y};
+                contact.contacts[1] = first_pos + glm::vec2{sgn * first_extent.x, -first_extent.y};
+            } else {
+                float sgn = first_pos.x > second_pos.x ? 1.0f : -1.0f;
+                contact.contacts[0] = second_pos + glm::vec2{sgn * second_extent.x, +second_extent.y};
+                contact.contacts[1] = second_pos + glm::vec2{sgn * second_extent.x, -second_extent.y};
+            }
         } else {
             if (n.y < 0)
                 contact.normal = glm::vec2(0, -1);
@@ -73,9 +79,15 @@ Contact Collide(BoundingBox first, BoundingBox second) {
                 contact.normal = glm::vec2(0, 1);
             contact.penetration = overlap.y;
 
-            float dx = std::min(first_extent.x, second_extent.x);
-            contact.contacts[0] = first_pos + glm::vec2{+dx, first_extent.y};
-            contact.contacts[1] = first_pos + glm::vec2{-dx, first_extent.y};
+            if (first_extent.x < second_extent.x) {
+                float sgn = second_pos.y > first_pos.y ? 1.0f : -1.0f;
+                contact.contacts[0] = first_pos + glm::vec2{+first_extent.x, sgn * first_extent.y};
+                contact.contacts[1] = first_pos + glm::vec2{-first_extent.x, sgn * first_extent.y};
+            } else {
+                float sgn = first_pos.y > second_pos.y ? 1.0f : -1.0f;
+                contact.contacts[0] = second_pos + glm::vec2{+second_extent.x, sgn * second_extent.y};
+                contact.contacts[1] = second_pos + glm::vec2{-second_extent.x, sgn * second_extent.y};
+            }
         }
         contact.contact_count = 2;
     }
@@ -85,6 +97,15 @@ Contact Collide(BoundingBox first, BoundingBox second) {
 
 Contact Collide(BoundingBox first, BoundingCircle second) {
     Contact contact;
+
+    // precull
+    /*if (second.center.x < first.min.x - second.radius ||
+        second.center.y < first.min.y - second.radius ||
+        second.center.x > first.max.x + second.radius ||
+        second.center.y > first.max.y + second.radius) {
+        return contact;
+    }*/
+
     glm::vec2 first_pos = (first.min + first.max) / 2.0f;
 
     // Vector from first to second;
@@ -95,7 +116,7 @@ Contact Collide(BoundingBox first, BoundingCircle second) {
 
     // Closest point on the box to center of the circle
     // (Clamp direction vector to edges of the AABB)
-    glm::vec2 closest = glm::clamp(-extent, extent, n);
+    glm::vec2 closest = glm::clamp(n, -extent, extent);
 
     bool inside = false;
 
@@ -134,31 +155,16 @@ Contact Collide(BoundingBox first, BoundingCircle second) {
     // Collision normal needs to be flipped to point outside if circle was
     // inside the AABB
     contact.normal = (inside ? -normal : normal) / d;
-    contact.penetration = r + d;
-
-    if (inside) {
-        contact.contacts[0] = second.center;
-    } else {
-        if (closest.x == extent.x) {
-            contact.contacts[0] = first_pos + n + glm::vec2{-second.radius, 0};
-        } else if (closest.x == -extent.x) {
-            contact.contacts[0] = first_pos + n + glm::vec2{+second.radius, 0};
-        } else if (closest.y == extent.y) {
-            contact.contacts[0] = first_pos + n + glm::vec2{0, -second.radius};
-        } else if (closest.y == -extent.y) {
-            contact.contacts[0] = first_pos + n + glm::vec2{0, +second.radius};
-        } else {
-            std::terminate(); // todo
-        }
-    }
-
+    contact.penetration = r - d;
+    contact.contacts[0] = second.center - second.radius * glm::normalize(contact.normal);
     contact.contact_count = 1;
+
     return contact;
 }
 
 Contact Collide(BoundingCircle first, BoundingBox second) {
     Contact contact = Collide(second, first);
-    contact.normal *= -1.0f;
+    contact.normal = -contact.normal;
     return contact;
 }
 

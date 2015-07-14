@@ -11,7 +11,7 @@ public:
     RandomBall(glm::vec2 initial_pos, float radius,
                glm::vec4 color = glm::vec4(1.0f))
             : radius(radius), color(color) {
-        inverse_mass = 1 / radius*radius;
+        inverse_mass = 1 / (radius*radius);
         position = initial_pos;
         bcircles.push_back({position, radius});
     }

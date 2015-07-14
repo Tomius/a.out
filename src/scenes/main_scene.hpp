@@ -3,9 +3,11 @@
 #include "game_objects/static.hpp"
 #include "game_objects/scene.hpp"
 #include "game_objects/character.hpp"
+#include "game_objects/random_stuff.hpp"
 
 #include "gfx/material/color_material.hpp"
 #include "physics/phy_scene.hpp"
+
 
 namespace Scenes
 {
@@ -31,8 +33,9 @@ public:
         AddRigidBody(ground.get());
 
         AddRigidBody(EmplaceGameObject<Character>());
-        AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{3.0f, 3.0f}, 1.0f));
+        AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{3.0f, 3.0f}, 1.2f));
         AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{-4.0f, 4.0f}, 0.3f));
+        AddRigidBody(EmplaceGameObject<RandomStuff>(glm::vec2{-6.0f, 2.0f}, 0.5f));
     }
 
     void Step(float dt) override {

@@ -10,7 +10,7 @@ namespace GameObjects
 
 class Character : public RandomBall {
 public:
-    Character() : RandomBall (glm::vec2{0, 0.5f}, 0.5f,
+    Character() : RandomBall (glm::vec2{0, 1.0f}, 0.6f,
                               glm::vec4{0.0f, 0.6f, 0.8f, 1.0f}) {}
 
     void Step(float dt) override {
@@ -20,7 +20,7 @@ public:
 
         bool in_air = position.y > radius + 0.01f;
         const float max_speed = 16;
-        const float move_force = in_air ? 4 : 12;
+        const float move_force = in_air ? 2 : 6;
 
         if (a_pressed && !d_pressed) {
             if (-velocity.x < max_speed) {
@@ -46,7 +46,7 @@ public:
                     break;
                 case GLFW_KEY_SPACE:
                     if (!in_air) {
-                        ApplyImpulse({0.0f, 6.0f});
+                        ApplyImpulse({0.0f, 3.0f});
                     }
                     break;
             }
