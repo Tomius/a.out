@@ -79,8 +79,10 @@ private:
                       "uniform float radius;\n"
                       "void main()\n"
                       "{\n"
-                      "    if (length(pos - center) > radius) discard;\n"
-                      "    col = GetColor(texCoord);\n"
+                      "    float dist = length(pos - center);\n"
+                      "    float delta = 2*fwidth(dist);\n"
+                      "    float alpha = smoothstep(radius-delta, radius, dist);\n"
+                      "    col = vec4(GetColor(texCoord).rgb, 1-alpha);\n"
                       "}"
                   },
                   Material::GetShader()}

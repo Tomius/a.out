@@ -29,6 +29,9 @@ int main(int argc, char** argv)
     else
         win = std::make_unique<Video::Window>(640, 480, "a.out");
 
+    glEnable (gl::GL_BLEND);
+    glBlendFunc (gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
+
     //Scenes::GfxTestScene scene;
     Scenes::MainScene scene;
     win->SetScene(&scene);
