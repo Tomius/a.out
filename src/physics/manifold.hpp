@@ -21,6 +21,9 @@ private:
     RigidBody* first;
     RigidBody* second;
 
+    float ApplyBaseImpulse(Contact contact);
+    void ApplyFrictionImpulse(Contact contact);
+
 public:
     Manifold(RigidBody* first, RigidBody* second);
     void ApplyImpulse();

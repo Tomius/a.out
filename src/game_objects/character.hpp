@@ -19,9 +19,8 @@ public:
         GetScene().GetCamera().viewport_center = position;
 
         bool in_air = position.y > radius + 0.01f;
-        const float max_speed = 8;
-        const float move_force = in_air ? 4 : 8;
-        const float friction_force = in_air ? 1 : 4;
+        const float max_speed = 16;
+        const float move_force = in_air ? 4 : 12;
 
         if (a_pressed && !d_pressed) {
             if (-velocity.x < max_speed) {
@@ -30,12 +29,6 @@ public:
         } else if (d_pressed && !a_pressed) {
             if (velocity.x < max_speed) {
                 ApplyImpulse(glm::vec2{move_force, 0.0f} * dt);
-            }
-        } else {
-            float speed_abs = std::abs(velocity.x);
-            float speed_sign = velocity.x / speed_abs;
-            if (speed_abs > 0.01f) {
-                ApplyImpulse(glm::vec2{-speed_sign * friction_force, 0.0f} * dt);
             }
         }
     }

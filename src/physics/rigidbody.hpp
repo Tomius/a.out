@@ -19,7 +19,9 @@ public:
     float angular_velocity = 0;
     float angular_acceleration = 0;
 
-    float restitution = 0.7f;
+    float static_friction = 0.3f;
+    float dynamic_friction = 0.15f;
+    float restitution = 0.4f;
 
     std::vector<BoundingBox> bboxes;
     std::vector<BoundingCircle> bcircles;

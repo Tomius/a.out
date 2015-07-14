@@ -162,8 +162,71 @@ Manifold::Manifold(RigidBody* first, RigidBody* second)
 }
 
 
+// float Manifold::ApplyBaseImpulse(Contact contact) {
+//     // Calculate relative velocity
+//     glm::vec2 rv = second->velocity - first->velocity;
+
+//     // Calculate relative velocity in terms of the normal direction
+//     float velAlongNormal = glm::dot(rv, contact.normal);
+
+//     // Do not resolve if velocities are separating
+//     if (velAlongNormal > 0)
+//         continue ;
+
+//     // Calculate restitution
+//     float e = std::min(first->restitution, second->restitution);
+
+//     // Calculate impulse ratio
+//     float j = -(1 + e) * velAlongNormal;
+//     j /= first->inverse_mass + second->inverse_mass;
+//     j /= contacts.size();
+
+//     // Apply impulse
+//     glm::vec2 impulse = j * contact.normal;
+//     first->ApplyImpulse(-impulse);
+//     second->ApplyImpulse(impulse);
+
+//     return j;
+// }
+
+// void Manifold::ApplyFrictionImpulse(Contact contact, float j) {
+//     // Calculate relative velocity
+//     glm::vec2 rv = second->velocity - first->velocity;
+
+//     // Solve for the tangent vector
+//     glm::vec2 tangent = glm::normalize(rv - glm::dot(rv, contact.normal) * contact.normal);
+
+//     // Solve for magnitude to apply along the friction vector
+//     float jt = -glm::dot( rv, tangent);
+//     jt /= first->inverse_mass + second->inverse_mass;
+//     jt /= contacts.size();
+
+//     // Don't apply tiny friction impulses
+//     if (jt < 0.0001f) {
+//         return;
+//     }
+
+//     // Calculate mixed static and dynamic friction
+//     float sf = std::sqrt(first->static_friction * second->static_friction);
+//     float df = std::sqrt(first->dynamic_friction * second->dynamic_friction);
+
+//     // Clamp magnitude of friction and create impulse vector
+//     glm::vec2 impulse;
+//     if (std::abs(jt) < j * sf) {
+//       impulse = tangent * jt;
+//     } else {
+//       impulse = tangent * -j * df;
+//     }
+
+//     // Apply
+//     first->ApplyImpulse(-impulse);
+//     second->ApplyImpulse(impulse);
+// }
+
 void Manifold::ApplyImpulse() {
     for (auto& contact : contacts) {
+        // ========================= Base impulse ==============================
+
         // Calculate relative velocity
         glm::vec2 rv = second->velocity - first->velocity;
 
@@ -172,7 +235,7 @@ void Manifold::ApplyImpulse() {
 
         // Do not resolve if velocities are separating
         if (velAlongNormal > 0)
-            continue;
+            continue ;
 
         // Calculate restitution
         float e = std::min(first->restitution, second->restitution);
@@ -180,11 +243,47 @@ void Manifold::ApplyImpulse() {
         // Calculate impulse ratio
         float j = -(1 + e) * velAlongNormal;
         j /= first->inverse_mass + second->inverse_mass;
+        j /= contacts.size();
 
         // Apply impulse
         glm::vec2 impulse = j * contact.normal;
         first->ApplyImpulse(-impulse);
         second->ApplyImpulse(impulse);
+
+        // ======================= Frition impulse =============================
+
+        // Calculate relative velocity
+        rv = second->velocity - first->velocity;
+
+        // Solve for the tangent vector
+        glm::vec2 tangent = rv - glm::dot(rv, contact.normal) * contact.normal;
+        float d = glm::dot(tangent, tangent);
+        if (d < 0.0001f) { continue; }
+        tangent /= std::sqrt(d);
+
+        // Solve for magnitude to apply along the friction vector
+        float jt = -glm::dot(rv, tangent);
+        jt /= first->inverse_mass + second->inverse_mass;
+        jt /= contacts.size();
+
+        // Don't apply tiny friction impulses
+        if (std::abs(jt) < 0.0001f) { continue; }
+
+        // Calculate mixed static and dynamic friction
+        float sf = std::sqrt(first->static_friction * second->static_friction);
+        float df = std::sqrt(first->dynamic_friction * second->dynamic_friction);
+
+        // Clamp magnitude of friction and create impulse vector
+        glm::vec2 frictionImpulse;
+        if (std::abs(jt) < j * sf) {
+          frictionImpulse = tangent * jt;
+        } else {
+          frictionImpulse = tangent * -j * df;
+        }
+
+        // Apply
+        first->ApplyImpulse(-frictionImpulse);
+        second->ApplyImpulse(frictionImpulse);
     }
 }
 
