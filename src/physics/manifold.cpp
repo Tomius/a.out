@@ -46,7 +46,7 @@ bool Collide(Contact* contact, BoundingBox first, BoundingBox second) {
     if (overlap.x > 0 && overlap.y > 0) {
         // Find out which axis is axis of least penetration
         // TODO: this approach only works if dt is small enough
-        if (overlap.x > overlap.y) {
+        if (overlap.x < overlap.y) {
             if (n.x < 0)
                 contact->normal = glm::vec2(-1, 0);
             else
