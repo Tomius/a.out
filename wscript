@@ -62,7 +62,7 @@ def build(bld):
         'src/video/camera.cpp',
         'src/video/window.cpp',
         'src/physics/rigidbody.cpp',
-        'src/physics/collisionhelper.cpp',
+        'src/physics/manifold.cpp',
         'src/physics/objectlayer.cpp',
     ]
 
