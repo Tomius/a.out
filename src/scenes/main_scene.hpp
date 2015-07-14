@@ -27,7 +27,7 @@ public:
                 Gfx::ColorMaterial{color});
         }
 
-        ground->bboxes.push_back({glm::vec2{-500, -2}, glm::vec2{500, 0}});
+        ground->bboxes.push_back({glm::vec2{-500, -1}, glm::vec2{500, 0}});
         AddRigidBody(ground.get());
 
         AddRigidBody(EmplaceGameObject<Character>());
