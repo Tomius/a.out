@@ -39,6 +39,11 @@ public:
         Scene::Step(dt);
         PhyScene::Step(dt);
     }
+
+    void Draw() override {
+        Scene::Draw();
+        PhyScene::DebugDraw(GetScene().GetCamera());
+    }
 private:
     std::unique_ptr<RigidBody> ground;
 };

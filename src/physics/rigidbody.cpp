@@ -24,9 +24,24 @@ void RigidBody::ApplyImpulse(glm::vec2 impulse) {
     velocity += impulse * inverse_mass;
 }
 
+static inline float Cross2D(glm::vec2 a, glm::vec2 b) {
+  return a.x * b.y - a.y * b.x;
+}
+
+void RigidBody::ApplyImpulse(glm::vec2 impulse, glm::vec2 contactVector) {
+    ApplyImpulse(impulse);
+    ApplyTorqueImpulse(Cross2D(contactVector, impulse));
+}
+
 void RigidBody::ApplyForce(glm::vec2 force) {
     acceleration += force * inverse_mass;
 }
+
+void RigidBody::ApplyForce(glm::vec2 force, glm::vec2 contactVector) {
+    ApplyForce(force);
+    ApplyTorque(Cross2D(contactVector, force));
+}
+
 
 void RigidBody::ApplyTorqueImpulse(float impulse) {
     angular_velocity += impulse * inverse_inertia;

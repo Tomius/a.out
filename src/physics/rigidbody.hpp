@@ -32,9 +32,10 @@ public:
     void AddBounder(BoundingCircle);
 
     void ApplyImpulse(glm::vec2 impulse);
+    void ApplyImpulse(glm::vec2 impulse, glm::vec2 contactVector);
     void ApplyForce(glm::vec2 force);
+    void ApplyForce(glm::vec2 force, glm::vec2 contactVector);
 
-    // todo: how to apply torques not in the center of mass
     void ApplyTorqueImpulse(float impulse);
     void ApplyTorque(float torque);
 };

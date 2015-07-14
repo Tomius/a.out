@@ -12,7 +12,7 @@ namespace Video
 namespace GameObjects
 {
 
-class Scene : GameObject
+class Scene : public GameObject
 {
 public:
     Scene();
@@ -39,7 +39,7 @@ public:
     bool RemoveGameObject(GameObject* game_object);
 
     Video::Camera& GetCamera() { return camera; }
-    Video::Camera const& GetCamera() const { return camera; }
+    const Video::Camera& GetCamera() const { return camera; }
 
 private:
     std::vector<std::unique_ptr<GameObject>> game_objects;
