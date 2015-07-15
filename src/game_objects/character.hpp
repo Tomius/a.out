@@ -22,11 +22,14 @@ public:
         const float max_speed = 16;
         const float move_force = in_air ? 2 : 6;
 
-        if (a_pressed && !d_pressed) {
+        GLFWwindow* window = GetScene().GetWindow();
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
             if (-velocity.x < max_speed) {
                 ApplyImpulse(glm::vec2{-move_force, 0.0f} * dt);
             }
-        } else if (d_pressed && !a_pressed) {
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
             if (velocity.x < max_speed) {
                 ApplyImpulse(glm::vec2{move_force, 0.0f} * dt);
             }
@@ -36,34 +39,10 @@ public:
     void KeyAction(int key, int scancode, int action, int mods) override {
         bool in_air = position.y > radius + 0.01f;
 
-        if (action == GLFW_PRESS) {
-            switch (key) {
-                case GLFW_KEY_A:
-                    a_pressed = true;
-                    break;
-                case GLFW_KEY_D:
-                    d_pressed = true;
-                    break;
-                case GLFW_KEY_SPACE:
-                    if (!in_air) {
-                        ApplyImpulse({0.0f, 3.0f});
-                    }
-                    break;
-            }
-        } else if (action == GLFW_RELEASE) {
-            switch (key) {
-                case GLFW_KEY_A:
-                    a_pressed = false;
-                    break;
-                case GLFW_KEY_D:
-                    d_pressed = false;
-                    break;
-            }
+        if (action == GLFW_PRESS && key == GLFW_KEY_SPACE && !in_air) {
+            ApplyImpulse({0.0f, 3.0f});
         }
     }
-
-private:
-    bool a_pressed = false, d_pressed = false;
 };
 
 }

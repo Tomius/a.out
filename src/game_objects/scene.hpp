@@ -4,6 +4,7 @@
 #include <vector>
 #include "game_objects/game_object.hpp"
 
+class GLFWwindow;
 namespace Video
 {
     class Camera;
@@ -41,9 +42,14 @@ public:
     Video::Camera& GetCamera() { return camera; }
     const Video::Camera& GetCamera() const { return camera; }
 
+    GLFWwindow* GetWindow() { return win; }
+    const GLFWwindow* GetWindow() const { return win; }
+    void SetWindow(GLFWwindow* window) { win = window; }
+
 private:
     std::vector<std::unique_ptr<GameObject>> game_objects;
     Video::Camera& camera;
+    GLFWwindow* win;
 };
 
 }

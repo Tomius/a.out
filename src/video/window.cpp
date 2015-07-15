@@ -191,6 +191,7 @@ GameObjects::Scene* Window::GetScene() const
 void Window::SetScene(GameObjects::Scene* scene)
 {
     window2scene[win] = scene;
+    scene->SetWindow(win);
     scene->ScreenResized(GetSize());
 }
 
