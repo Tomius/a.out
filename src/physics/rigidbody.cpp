@@ -1,6 +1,6 @@
 #include "rigidbody.hpp"
 
-void RigidBody::AddBounder(BoundingBox bbox) {
+void RigidBody::AddBounder(OrientedBoundingBox bbox) {
     bboxes.push_back(bbox);
 }
 
@@ -49,4 +49,16 @@ void RigidBody::ApplyTorqueImpulse(float impulse) {
 
 void RigidBody::ApplyTorque(float torque) {
     angular_velocity += torque * inverse_inertia;
+}
+
+void RigidBody::UpdateBounderCache() const {
+    cache_bboxes.clear();
+    for (auto& bbox : bboxes) {
+        cache_bboxes.emplace_back(*this, bbox);
+    }
+
+    cache_bcircles.clear();
+    for (auto& bcircle : bcircles) {
+        cache_bcircles.emplace_back(*this, bcircle);
+    }
 }

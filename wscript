@@ -61,6 +61,8 @@ def build(bld):
         'src/misc/optiongrouper.cpp',
         'src/video/camera.cpp',
         'src/video/window.cpp',
+        'src/physics/bounding_box.cpp',
+        'src/physics/bounding_circle.cpp',
         'src/physics/rigidbody.cpp',
         'src/physics/manifold.cpp',
         'src/physics/phy_scene.cpp',

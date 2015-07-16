@@ -4,8 +4,8 @@
 #include <memory>
 #include <glm/vec2.hpp>
 #include <glm/matrix.hpp>
-#include "boundingbox.hpp"
-#include "boundingcircle.hpp"
+#include "bounding_box.hpp"
+#include "bounding_circle.hpp"
 
 class RigidBody {
 public:
@@ -23,12 +23,15 @@ public:
     float dynamic_friction = 0.3f;
     float restitution = 0.4f;
 
-    std::vector<BoundingBox> bboxes;
+    std::vector<OrientedBoundingBox> bboxes;
     std::vector<BoundingCircle> bcircles;
+
+    mutable std::vector<CachedOrientedBoundingBox> cache_bboxes;
+    mutable std::vector<CachedBoundingCircle> cache_bcircles;
 
     glm::mat3 GetMatrix() const;
 
-    void AddBounder(BoundingBox);
+    void AddBounder(OrientedBoundingBox);
     void AddBounder(BoundingCircle);
 
     void ApplyImpulse(glm::vec2 impulse);
@@ -38,4 +41,6 @@ public:
 
     void ApplyTorqueImpulse(float impulse);
     void ApplyTorque(float torque);
+
+    void UpdateBounderCache() const;
 };

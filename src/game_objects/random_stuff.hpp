@@ -11,41 +11,39 @@ public:
     RandomStuff(glm::vec2 initial_pos, float size,
                 glm::vec4 color = glm::vec4(1.0f))
             : size(size), color(color) {
+        orientation = 17 * M_PI / 180;
         inverse_mass = 1 / (size*size);
         position = initial_pos;
+
+        bboxes.push_back({glm::vec2{-size/2, size/2},
+                          glm::vec2{+size/2, 3*size/2}});
+        bboxes.push_back({glm::vec2{-size/2, -3*size/2},
+                          glm::vec2{+size/2, -size/2}});
+
+        bboxes.push_back({glm::vec2{-3*size/2, -size/2},
+                          glm::vec2{-size/2, +size/2}});
+        bboxes.push_back({glm::vec2{+size/2, -size/2},
+                          glm::vec2{+3*size/2, +size/2}});
     }
 
     void Draw() override {
         Gfx::Rectangle::Draw(
-            {position.x - size/2, position.y + size/2, size, size},
+            {-size/2, +size/2, size, size},
             Gfx::ColorMaterial{color},
-            GetScene().GetCamera().GetMatrix());
+            GetScene().GetCamera().GetMatrix() * GetMatrix());
         Gfx::Rectangle::Draw(
-            {position.x - size/2, position.y - 3*size/2, size, size},
+            {-size/2, -3*size/2, size, size},
             Gfx::ColorMaterial{color},
-            GetScene().GetCamera().GetMatrix());
+            GetScene().GetCamera().GetMatrix() * GetMatrix());
 
         Gfx::Rectangle::Draw(
-            {position.x - 3*size/2, position.y - size/2, size, size},
+            {-3*size/2, -size/2, size, size},
             Gfx::ColorMaterial{color},
-            GetScene().GetCamera().GetMatrix());
+            GetScene().GetCamera().GetMatrix() * GetMatrix());
         Gfx::Rectangle::Draw(
-            {position.x + size/2, position.y - size/2, size, size},
+            {+size/2, -size/2, size, size},
             Gfx::ColorMaterial{color},
-            GetScene().GetCamera().GetMatrix());
-    }
-
-    void Step(float dt) override {
-        bboxes.clear();
-        bboxes.push_back({position + glm::vec2{-size/2, size/2},
-                          position + glm::vec2{+size/2, 3*size/2}});
-        bboxes.push_back({position + glm::vec2{-size/2, -3*size/2},
-                          position + glm::vec2{+size/2, -size/2}});
-
-        bboxes.push_back({position + glm::vec2{-3*size/2, -size/2},
-                          position + glm::vec2{-size/2, +size/2}});
-        bboxes.push_back({position + glm::vec2{+size/2, -size/2},
-                          position + glm::vec2{+3*size/2, +size/2}});
+            GetScene().GetCamera().GetMatrix() * GetMatrix());
     }
 
 protected:

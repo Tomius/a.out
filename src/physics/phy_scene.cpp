@@ -27,6 +27,10 @@ void PhyScene::DoStep(float dt) {
         IntegrateForces(rbody, dt);
     }
 
+    for (RigidBody* rbody : rbodies) {
+        rbody->UpdateBounderCache();
+    }
+
     for (size_t i = 0; i < rbodies.size(); i++) {
         for (size_t j = i+1; j < rbodies.size(); j++) {
             manifolds.emplace_back(rbodies[i], rbodies[j]);
@@ -58,6 +62,7 @@ void PhyScene::IntegrateForces(RigidBody* body, float dt) {
     body->velocity += (body->acceleration + kGravity) * dt;
     body->angular_velocity += body->angular_acceleration * dt;
 }
+
 void PhyScene::IntegrateVelocities(RigidBody* body, float dt) {
     if (body->inverse_mass == 0.0f)
         return;

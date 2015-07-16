@@ -4,8 +4,6 @@
 #include <vector>
 
 #include "rigidbody.hpp"
-#include "boundingbox.hpp"
-#include "boundingcircle.hpp"
 #include "video/camera.hpp"
 
 class Contact

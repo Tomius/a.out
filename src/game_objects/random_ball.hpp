@@ -13,16 +13,12 @@ public:
             : radius(radius), color(color) {
         inverse_mass = 1 / (radius*radius);
         position = initial_pos;
-        bcircles.push_back({position, radius});
+        bcircles.push_back({glm::vec2(), radius});
     }
 
     void Draw() override {
         Gfx::Circle::Draw(position, radius, Gfx::ColorMaterial{color},
                           GetScene().GetCamera().GetMatrix());
-    }
-
-    void Step(float dt) override {
-        bcircles[0].center = position;
     }
 
 protected:

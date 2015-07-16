@@ -16,9 +16,6 @@ static OptionGrouper::BoolSetOption fullscreen_opt{
 
 int main(int argc, char** argv)
 {
-    RigidBody thingy;
-    thingy.AddBounder(BoundingBox());
-
     using namespace GameObjects;
 
     GetOptionGrouper().Run(argc, argv);
