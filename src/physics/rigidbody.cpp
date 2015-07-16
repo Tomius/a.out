@@ -1,4 +1,5 @@
 #include "rigidbody.hpp"
+#include "math.hpp"
 
 void RigidBody::AddBounder(OrientedBoundingBox bbox) {
     bboxes.push_back(bbox);
@@ -24,13 +25,9 @@ void RigidBody::ApplyImpulse(glm::vec2 impulse) {
     velocity += impulse * inverse_mass;
 }
 
-static inline float Cross2D(glm::vec2 a, glm::vec2 b) {
-  return a.x * b.y - a.y * b.x;
-}
-
 void RigidBody::ApplyImpulse(glm::vec2 impulse, glm::vec2 contactVector) {
     ApplyImpulse(impulse);
-    ApplyTorqueImpulse(Cross2D(contactVector, impulse));
+    ApplyTorqueImpulse(Math::Cross2D(contactVector, impulse));
 }
 
 void RigidBody::ApplyForce(glm::vec2 force) {
@@ -39,7 +36,7 @@ void RigidBody::ApplyForce(glm::vec2 force) {
 
 void RigidBody::ApplyForce(glm::vec2 force, glm::vec2 contactVector) {
     ApplyForce(force);
-    ApplyTorque(Cross2D(contactVector, force));
+    ApplyTorque(Math::Cross2D(contactVector, force));
 }
 
 

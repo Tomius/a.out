@@ -11,8 +11,9 @@ public:
     RandomStuff(glm::vec2 initial_pos, float size,
                 glm::vec4 color = glm::vec4(1.0f))
             : size(size), color(color) {
-        orientation = 17 * M_PI / 180;
+        orientation = 17 * M_PI / 180; // initial orientation is 17 degrees
         inverse_mass = 1 / (size*size);
+        inverse_inertia = inverse_mass;
         position = initial_pos;
 
         bboxes.push_back({glm::vec2{-size/2, size/2},

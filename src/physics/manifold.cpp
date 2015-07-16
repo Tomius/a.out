@@ -200,8 +200,14 @@ void Manifold::ApplyImpulse() {
     for (auto& contact : contacts) {
         // ========================= Base impulse ==============================
 
+        // Vector from the objects center of mass to the contact point
+        glm::vec2 rfirst = contact.position - first->position;
+        glm::vec2 rsecond = contact.position - second->position;
+
         // Calculate relative velocity
-        glm::vec2 rv = second->velocity - first->velocity;
+        glm::vec2 rv =
+             second->velocity + Math::Cross2D(second->angular_velocity, rsecond)
+            -first->velocity  - Math::Cross2D(first->angular_velocity,  rfirst);
 
         // Calculate relative velocity in terms of the normal direction
         float velAlongNormal = glm::dot(rv, contact.normal);
@@ -213,20 +219,29 @@ void Manifold::ApplyImpulse() {
         // Calculate restitution
         float e = std::min(first->restitution, second->restitution);
 
+        // Calc inverse mass sum
+        float rfcn = Math::Cross2D(rfirst, contact.normal);
+        float rscn = Math::Cross2D(rsecond, contact.normal);
+        float invMassSum =
+            first->inverse_mass + second->inverse_mass
+            + Math::Sqr(rfcn) * first->inverse_inertia
+            + Math::Sqr(rscn) * second->inverse_inertia;
+
         // Calculate impulse ratio
         float j = -(1 + e) * velAlongNormal;
-        j /= first->inverse_mass + second->inverse_mass;
+        j /= invMassSum;
         j /= contacts.size();
 
         // Apply impulse
         glm::vec2 impulse = j * contact.normal;
-        first->ApplyImpulse(-impulse);
-        second->ApplyImpulse(impulse);
+        first->ApplyImpulse(-impulse, rfirst);
+        second->ApplyImpulse(impulse, rsecond);
 
         // ======================= Frition impulse =============================
 
         // Recalculate relative velocity
-        rv = second->velocity - first->velocity;
+        rv =  second->velocity + Math::Cross2D(second->angular_velocity, rsecond)
+             -first->velocity  - Math::Cross2D(first->angular_velocity,  rfirst);
 
         // Solve for the tangent vector
         glm::vec2 tangent = rv - glm::dot(rv, contact.normal) * contact.normal;
@@ -236,7 +251,7 @@ void Manifold::ApplyImpulse() {
 
         // Solve for magnitude to apply along the friction vector
         float jt = -glm::dot(rv, tangent);
-        jt /= first->inverse_mass + second->inverse_mass;
+        jt /= invMassSum;
         jt /= contacts.size();
 
         // Don't apply tiny friction impulses
@@ -255,8 +270,8 @@ void Manifold::ApplyImpulse() {
         }
 
         // Apply
-        first->ApplyImpulse(-frictionImpulse);
-        second->ApplyImpulse(frictionImpulse);
+        first->ApplyImpulse(-frictionImpulse, rfirst);
+        second->ApplyImpulse(frictionImpulse, rsecond);
     }
 }
 

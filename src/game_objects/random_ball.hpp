@@ -12,6 +12,7 @@ public:
                glm::vec4 color = glm::vec4(1.0f))
             : radius(radius), color(color) {
         inverse_mass = 1 / (radius*radius);
+        inverse_inertia = inverse_mass;
         position = initial_pos;
         bcircles.push_back({glm::vec2(), radius});
     }
