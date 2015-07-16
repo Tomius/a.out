@@ -11,9 +11,8 @@
 class Contact
 {
 public:
-    glm::vec2 contacts[2];
-    unsigned contact_count = 0;
-    glm::vec2 normal; // From first to second
+    glm::vec2 position;
+    glm::vec2 normal; // From first object to second
     float penetration = 0;
 };
 

@@ -5,55 +5,56 @@
 #include "gfx/material/color_material.hpp"
 
 
-Contact Collide(BoundingCircle first, BoundingCircle second) {
-    Contact contact;
+void Collide(std::vector<Contact>& contacts,
+             BoundingCircle a,
+             BoundingCircle b) {
+    // Vector from a to b
+    glm::vec2 n = b.center - a.center;
 
-    // Vector from first to second
-    glm::vec2 n = second.center - first.center;
-
-    float r = first.radius + second.radius;
+    float r = a.radius + b.radius;
     float sqr_r = r*r;
 
     if (glm::dot(n, n) > sqr_r)
-        return contact;
+        return;
 
     // Circles have collided, now compute manifold
     float d = glm::length(n);
 
+    contacts.emplace_back();
+    Contact& contact = contacts.back();
     // If distance between circles is not zero
     if (d != 0) {
         // Distance is difference between radius and distance
         contact.penetration = r - d;
         // the normal is n normalized
         contact.normal = n / d;
-        contact.contacts[0] = first.center + contact.normal*first.radius;
+        contact.position = a.center + contact.normal*a.radius;
     } else { // Circles are on same position
         // Choose random (but consistent) values
-        contact.penetration = first.radius;
+        contact.penetration = a.radius;
         contact.normal = glm::vec2(1, 0);
-        contact.contacts[0] = first.center;
+        contact.position = a.center;
     }
-    contact.contact_count = 1;
-
-    return contact;
 }
 
-Contact Collide(BoundingBox first, BoundingBox second) {
-    Contact contact;
-    glm::vec2 first_pos = (first.min + first.max) / 2.0f;
-    glm::vec2 second_pos = (second.min + second.max) / 2.0f;
+void Collide(std::vector<Contact>& contacts,
+             BoundingBox a,
+             BoundingBox b) {
+    glm::vec2 a_pos = (a.min + a.max) / 2.0f;
+    glm::vec2 b_pos = (b.min + b.max) / 2.0f;
 
-    // Vector from first to second
-    glm::vec2 n = second_pos - first_pos;
+    // Vector from a to b
+    glm::vec2 n = b_pos - a_pos;
 
     // Calculate half extents
-    glm::vec2 first_extent = (first.max - first.min) / 2.0f;
-    glm::vec2 second_extent = (second.max - second.min) / 2.0f;
+    glm::vec2 a_extent = (a.max - a.min) / 2.0f;
+    glm::vec2 b_extent = (b.max - b.min) / 2.0f;
 
     // Calculate overlap
-    glm::vec2 overlap = first_extent + second_extent - glm::abs(n);
+    glm::vec2 overlap = a_extent + b_extent - glm::abs(n);
 
     if (overlap.x > 0 && overlap.y > 0) {
+        Contact contact;
         // Find out which axis is axis of least penetration
         // TODO: this approach only works if dt is small enough
         if (overlap.x < overlap.y) {
@@ -63,12 +64,14 @@ Contact Collide(BoundingBox first, BoundingBox second) {
                 contact.normal = glm::vec2(1, 0);
             contact.penetration = overlap.x;
 
-            float sgn = second_pos.x > first_pos.x ? 1.0f : -1.0f;
-            float contact_x = first_pos.x + sgn * first_extent.x;
-            contact.contacts[0] = glm::vec2{contact_x, std::max(
-                first_pos.y - first_extent.y, second_pos.y - second_extent.y)};
-            contact.contacts[1] = glm::vec2{contact_x, std::min(
-                first_pos.y + first_extent.y, second_pos.y + second_extent.y)};
+            float sgn = b_pos.x > a_pos.x ? 1.0f : -1.0f;
+            float contact_x = a_pos.x + sgn * a_extent.x;
+            contact.position = glm::vec2{contact_x, std::max(
+                a_pos.y - a_extent.y, b_pos.y - b_extent.y)};
+            contacts.push_back(contact);
+            contact.position = glm::vec2{contact_x, std::min(
+                a_pos.y + a_extent.y, b_pos.y + b_extent.y)};
+            contacts.push_back(contact);
         } else {
             if (n.y < 0)
                 contact.normal = glm::vec2(0, -1);
@@ -76,37 +79,36 @@ Contact Collide(BoundingBox first, BoundingBox second) {
                 contact.normal = glm::vec2(0, 1);
             contact.penetration = overlap.y;
 
-            float sgn = second_pos.y > first_pos.y ? 1.0f : -1.0f;
-            float contact_y = first_pos.y + sgn * first_extent.y;
-            contact.contacts[0] = glm::vec2{std::max(first_pos.x - first_extent.x,
-                second_pos.x - second_extent.x), contact_y};
-            contact.contacts[1] = glm::vec2{std::min(first_pos.x + first_extent.x,
-                second_pos.x + second_extent.x), contact_y};
+            float sgn = b_pos.y > a_pos.y ? 1.0f : -1.0f;
+            float contact_y = a_pos.y + sgn * a_extent.y;
+            contact.position = glm::vec2{std::max(a_pos.x - a_extent.x,
+                b_pos.x - b_extent.x), contact_y};
+            contacts.push_back(contact);
+            contact.position = glm::vec2{std::min(a_pos.x + a_extent.x,
+                b_pos.x + b_extent.x), contact_y};
+            contacts.push_back(contact);
         }
-        contact.contact_count = 2;
     }
-
-    return contact;
 }
 
-Contact Collide(BoundingBox first, BoundingCircle second) {
-    Contact contact;
-
+void Collide(std::vector<Contact>& contacts,
+             BoundingBox a,
+             BoundingCircle b) {
     // precull
-    if (second.center.x < first.min.x - second.radius ||
-        second.center.y < first.min.y - second.radius ||
-        second.center.x > first.max.x + second.radius ||
-        second.center.y > first.max.y + second.radius) {
-        return contact;
+    if (b.center.x < a.min.x - b.radius ||
+        b.center.y < a.min.y - b.radius ||
+        b.center.x > a.max.x + b.radius ||
+        b.center.y > a.max.y + b.radius) {
+        return;
     }
 
-    glm::vec2 first_pos = (first.min + first.max) / 2.0f;
+    glm::vec2 a_pos = (a.min + a.max) / 2.0f;
 
-    // Vector from first to second;
-    glm::vec2 n = second.center - first_pos;
+    // Vector from a to b;
+    glm::vec2 n = b.center - a_pos;
 
     // Calculate half extents along each axis
-    glm::vec2 extent = (first.max - first.min) / 2.0f;
+    glm::vec2 extent = (a.max - a.min) / 2.0f;
 
     // Closest point on the box to center of the circle
     // (Clamp direction vector to edges of the AABB)
@@ -137,55 +139,55 @@ Contact Collide(BoundingBox first, BoundingCircle second) {
 
     glm::vec2 normal = n - closest;
     float d = glm::dot(normal, normal);
-    float r = second.radius;
+    float r = b.radius;
 
     // Early out of the radius is shorter than distance to closest point and
     // Circle not inside the AABB
     if (d > r * r && !inside)
-        return contact;
+        return;
 
     d = sqrt(d);
 
-    // Collision normal needs to be flipped to point outside if circle was
-    // inside the AABB
+    contacts.emplace_back();
+    Contact& contact = contacts.back();
+    // Collision normal needs to be flipped to point
+    // outside if circle was inside the AABB
     contact.normal = (inside ? -normal : normal) / d;
     contact.penetration = r - d;
-    contact.contacts[0] = second.center - second.radius * glm::normalize(contact.normal);
-    contact.contact_count = 1;
-
-    return contact;
+    contact.position = b.center - b.radius * glm::normalize(contact.normal);
 }
 
-Contact Collide(BoundingCircle first, BoundingBox second) {
-    Contact contact = Collide(second, first);
-    contact.normal = -contact.normal;
-    return contact;
+void Collide(std::vector<Contact>& contacts,
+             BoundingCircle a,
+             BoundingBox b) {
+    size_t old_size = contacts.size();
+    Collide(contacts, b, a);
+    if (contacts.size() > old_size) { // If there was a contact
+        // The normal has to go from the a object to the b
+        contacts.back().normal *= -1.0f;
+    }
 }
 
-Manifold::Manifold(RigidBody* first, RigidBody* second)
-        : first(first), second(second) {
-    if (first == second || first->inverse_mass + second->inverse_mass == 0.0f) {
+Manifold::Manifold(RigidBody* a, RigidBody* b)
+        : first(a), second(b) {
+    if (a == b || a->inverse_mass + b->inverse_mass == 0.0f) {
         return;
     }
 
-    for (auto& a : first->bcircles) {
-        for (auto& b : second->bcircles) {
-            Contact c = Collide(a, b);
-            if (c.contact_count > 0) { contacts.push_back(c); }
+    for (auto& x : a->bcircles) {
+        for (auto& y : b->bcircles) {
+            Collide(contacts, x, y);
         }
-        for(auto& b : second->bboxes) {
-            Contact c = Collide(a, b);
-            if (c.contact_count > 0) { contacts.push_back(c); }
+        for(auto& y : b->bboxes) {
+            Collide(contacts, x, y);
         }
     }
-    for(auto& a : first->bboxes) {
-        for (auto& b : second->bcircles) {
-            Contact c = Collide(a, b);
-            if (c.contact_count > 0) { contacts.push_back(c); }
+    for(auto& x : a->bboxes) {
+        for (auto& y : b->bcircles) {
+            Collide(contacts, x, y);
         }
-        for(auto& b : second->bboxes) {
-            Contact c = Collide(a, b);
-            if (c.contact_count > 0) { contacts.push_back(c); }
+        for(auto& y : b->bboxes) {
+            Collide(contacts, x, y);
         }
     }
 }
@@ -259,11 +261,9 @@ void Manifold::DebugDraw(const Video::Camera& camera) const {
     Gfx::ColorMaterial green{glm::vec4{1, 0, 0, 1}};
 
     for (const Contact& contact : contacts) {
-        for (unsigned i = 0; i < contact.contact_count; i++) {
-            Gfx::Pixel::Draw(contact.contacts[i], red, camera.GetMatrix());
-            Gfx::Line::Draw(contact.contacts[i],
-                            contact.contacts[i] + contact.normal*0.25f,
-                            green, camera.GetMatrix());
-        }
+        Gfx::Pixel::Draw(contact.position, red, camera.GetMatrix());
+        Gfx::Line::Draw(contact.position,
+                        contact.position + contact.normal*0.25f,
+                        green, camera.GetMatrix());
     }
 }
