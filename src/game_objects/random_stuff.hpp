@@ -13,7 +13,7 @@ public:
             : size(size), color(color) {
         orientation = 17 * M_PI / 180; // initial orientation is 17 degrees
         inverse_mass = 1 / (size*size);
-        inverse_inertia = inverse_mass;
+        inverse_inertia = inverse_mass; // todo
         position = initial_pos;
 
         bboxes.push_back({glm::vec2{-size/2, size/2},

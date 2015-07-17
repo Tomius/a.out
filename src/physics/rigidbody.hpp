@@ -19,8 +19,8 @@ public:
     float angular_velocity = 0;
     float angular_acceleration = 0;
 
-    float static_friction = 0.5f;
-    float dynamic_friction = 0.3f;
+    float static_friction = 0.6f;
+    float dynamic_friction = 0.5f;
     float restitution = 0.4f;
 
     std::vector<OrientedBoundingBox> bboxes;

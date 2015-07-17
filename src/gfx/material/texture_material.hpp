@@ -9,6 +9,7 @@ namespace Gfx
 class TextureMaterial
 {
 public:
+    TextureMaterial() {}
     TextureMaterial(Gl::Texture&& tex) : tex{std::move(tex)} {}
 
     static const Gl::Shader& GetShader()
@@ -27,6 +28,8 @@ public:
     void Update(const Gl::Program& program) const {
         tex.Bind();
     }
+
+    Gl::Texture& GetTexture() { return tex; }
 
 private:
     Gl::Texture tex;
