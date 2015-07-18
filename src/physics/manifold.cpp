@@ -213,8 +213,7 @@ void Manifold::ApplyImpulse() {
         float velAlongNormal = glm::dot(rv, contact.normal);
 
         // Do not resolve if velocities are separating
-        if (velAlongNormal > 0)
-            continue ;
+        if (velAlongNormal > 0) { continue; }
 
         // Calculate restitution
         float e = std::min(first->restitution, second->restitution);
@@ -237,6 +236,12 @@ void Manifold::ApplyImpulse() {
         first->ApplyImpulse(-impulse, rfirst);
         second->ApplyImpulse(impulse, rsecond);
 
+        // ======================= Rolling friction =============================
+
+        float rf = std::sqrt(first->rolling_friction * second->rolling_friction);
+        first->ApplyTorqueImpulse(rf * -Math::Sgn(first->angular_velocity) * j);
+        second->ApplyTorqueImpulse(rf * -Math::Sgn(second->angular_velocity) * j);
+
         // ======================= Frition impulse =============================
 
         // Recalculate relative velocity
@@ -246,15 +251,7 @@ void Manifold::ApplyImpulse() {
         // Solve for the tangent vector
         glm::vec2 tangent = rv - glm::dot(rv, contact.normal) * contact.normal;
         float d = glm::dot(tangent, tangent);
-        if (d < Math::kEpsilon) {
-            // If the relative velocity is along the normal, and at least
-            // one of the objects are rotating, then we have to apply rolling friction
-            // (notice that Math::Sgn(null vector) == 0)
-            float rf = std::sqrt(first->rolling_friction * second->rolling_friction);
-            first->ApplyTorqueImpulse(rf * -Math::Sgn(first->angular_velocity) * j);
-            second->ApplyTorqueImpulse(rf * -Math::Sgn(second->angular_velocity) * j);
-            continue;
-        }
+        if (d < Math::kEpsilon) { continue; }
         tangent /= std::sqrt(d);
 
         // Solve for magnitude to apply along the friction vector
@@ -263,7 +260,7 @@ void Manifold::ApplyImpulse() {
         jt /= contacts.size();
 
         // Don't apply tiny friction impulses
-        if (std::abs(jt) < 0.0001f) { continue; }
+        if (std::abs(jt) < Math::kEpsilon) { continue; }
 
         // Calculate mixed static and dynamic friction
         float sf = std::sqrt(first->static_friction * second->static_friction);
