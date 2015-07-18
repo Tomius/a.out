@@ -5,8 +5,6 @@
 
 namespace gl33 = gl33core;
 
-glm::vec2 kGravity{0, -9.81f};
-
 void PhyScene::Step(float dt) {
     // Prevent exterme lag from causing an "infinite loop"
     if (dt > 0.256f) {
@@ -20,11 +18,13 @@ void PhyScene::Step(float dt) {
     DoStep(dt);
 }
 
+static void Integrate(RigidBody* body, float dt);
+
 void PhyScene::DoStep(float dt) {
     manifolds.clear();
 
     for (RigidBody* rbody : rbodies) {
-        IntegrateForces(rbody, dt);
+        Integrate(rbody, dt/2);
     }
 
     for (RigidBody* rbody : rbodies) {
@@ -39,7 +39,11 @@ void PhyScene::DoStep(float dt) {
     }
 
     for (RigidBody* rbody : rbodies) {
-        IntegrateVelocities(rbody, dt);
+        Integrate(rbody, dt/2);
+    }
+
+    for (Manifold manifold : manifolds) {
+        manifold.PositionalCorrection();
     }
 }
 
@@ -55,18 +59,51 @@ void PhyScene::AddRigidBody(RigidBody* body) {
     rbodies.push_back(body);
 }
 
-void PhyScene::IntegrateForces(RigidBody* body, float dt) {
-    if (body->inverse_mass == 0.0f)
-        return;
+struct State { // generalized physics state
+    glm::vec3 x;
+    glm::vec3 v;
 
-    body->velocity += (body->acceleration + kGravity) * dt;
-    body->angular_velocity += body->angular_acceleration * dt;
+    State() {};
+    State(glm::vec3 x, glm::vec3 v) : x(x), v(v) {};
+    State(const PhysicsState& s)
+        : x{s.position, s.orientation}
+        , v{s.velocity, s.angular_velocity} {}
+
+    operator PhysicsState() const {
+        return {glm::vec2{x[0], x[1]}, glm::vec2{v[0], v[1]}, x[2], v[2]};
+    }
+};
+
+static glm::vec3 GetAcceleration(RigidBody* body, const State& state) {
+    return glm::vec3{body->GetAcceleration(state), body->GetAngularAcceleration(state)};
 }
 
-void PhyScene::IntegrateVelocities(RigidBody* body, float dt) {
-    if (body->inverse_mass == 0.0f)
-        return;
+static State Evaluate(RigidBody* body, const State& state,
+                      float dt, const State& d) {
+    State state2;
+    state2.x = state.x + d.x*dt;
+    state2.v = state.v + d.v*dt;
 
-    body->position += body->velocity * dt;
-    body->orientation += body->angular_velocity * dt;
+    State d2;
+    d2.x = state.v;
+    d2.v = GetAcceleration(body, state2);
+    return d2;
+}
+
+static void Integrate(RigidBody* body, float dt) {
+    if (body->inverse_mass == 0.0f) { return; }
+
+    State state = *body;
+    State a = Evaluate(body, state, 0.0f, {});
+    State b = Evaluate(body, state, dt*0.5f, a);
+    State c = Evaluate(body, state, dt*0.5f, b);
+    State d = Evaluate(body, state, dt, c);
+
+    State d_dt;
+    d_dt.x = 1.0f / 6.0f * (a.x + 2.0f*(b.x + c.x) + d.x);
+    d_dt.v = 1.0f / 6.0f * (a.v + 2.0f*(b.v + c.v) + d.v);
+
+    state.x += d_dt.x * dt;
+    state.v += d_dt.v * dt;
+    *static_cast<PhysicsState*>(body) = state;
 }

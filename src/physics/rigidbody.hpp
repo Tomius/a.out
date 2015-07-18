@@ -7,17 +7,22 @@
 #include "bounding_box.hpp"
 #include "bounding_circle.hpp"
 
-class RigidBody {
-public:
-    float inverse_mass = 0; // infitine mass == environment
+extern glm::vec2 kGravity;
+
+struct GenereralizedPhysicsState;
+
+struct PhysicsState {
     glm::vec2 position;
     glm::vec2 velocity;
-    glm::vec2 acceleration;
 
-    float inverse_inertia = 0;
     float orientation = 0; // in radians
     float angular_velocity = 0;
-    float angular_acceleration = 0;
+};
+
+class RigidBody : public PhysicsState {
+public:
+    float inverse_mass = 0; // infitine mass == environment
+    float inverse_inertia = 0;
 
     float static_friction = 0.6f;
     float dynamic_friction = 0.5f;
@@ -30,6 +35,8 @@ public:
     mutable std::vector<CachedOrientedBoundingBox> cache_bboxes;
     mutable std::vector<CachedBoundingCircle> cache_bcircles;
 
+public:
+    virtual ~RigidBody() {}
     glm::mat3 GetMatrix() const;
 
     void AddBounder(OrientedBoundingBox);
@@ -37,11 +44,15 @@ public:
 
     void ApplyImpulse(glm::vec2 impulse);
     void ApplyImpulse(glm::vec2 impulse, glm::vec2 contactVector);
-    void ApplyForce(glm::vec2 force);
-    void ApplyForce(glm::vec2 force, glm::vec2 contactVector);
 
     void ApplyTorqueImpulse(float impulse);
     void ApplyTorque(float torque);
 
     void UpdateBounderCache() const;
+
+    virtual glm::vec2 GetAcceleration(const PhysicsState& state) const;
+    virtual float GetAngularAcceleration(const PhysicsState& state) const;
+
+    glm::vec2 GetAcceleration() const { return GetAcceleration(*this); }
+    float GetAngularAcceleration() const { return GetAngularAcceleration(*this); }
 };

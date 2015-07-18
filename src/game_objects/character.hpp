@@ -21,23 +21,29 @@ public:
         RandomBall::Step(dt);
 
         GetScene().GetCamera().viewport_center = position;
+    }
 
+    glm::vec2 GetAcceleration(const PhysicsState& state) const override {
         bool in_air = position.y > radius + 0.01f;
         const float max_speed = 16;
         const float move_force = in_air ? 6 : 18;
 
+        glm::vec2 accel = kGravity;
+
         GLFWwindow* window = GetScene().GetWindow();
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
             if (-velocity.x < max_speed) {
-                ApplyImpulse(glm::vec2{-move_force, 0.0f} * dt);
+                accel.x -= move_force;
             }
         }
 
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
             if (velocity.x < max_speed) {
-                ApplyImpulse(glm::vec2{move_force, 0.0f} * dt);
+                accel.x += move_force;
             }
         }
+
+        return accel;
     }
 
     void KeyAction(int key, int scancode, int action, int mods) override {

@@ -24,5 +24,6 @@ private:
 public:
     Manifold(RigidBody* first, RigidBody* second);
     void ApplyImpulse();
+    void PositionalCorrection();
     void DebugDraw(const Video::Camera& camera) const;
 };

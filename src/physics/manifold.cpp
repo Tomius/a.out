@@ -280,6 +280,29 @@ void Manifold::ApplyImpulse() {
     }
 }
 
+void Manifold::PositionalCorrection() {
+    const float kSlop = 0.05f; // Penetration allowance
+    const float kPercent = 0.4f; // Penetration percentage to correct
+
+    size_t contacts_to_correct_num = 0;
+    for (const Contact& contact : contacts) {
+        if (contact.penetration > kSlop) { contacts_to_correct_num++; }
+    }
+
+    if (contacts_to_correct_num == 0) {
+        return;
+    }
+
+    for (const Contact& contact : contacts) {
+        float correction_value = std::max(contact.penetration - kSlop, 0.0f);
+        float sum_inv_mass = first->inverse_mass + second->inverse_mass;
+        correction_value *= kPercent / contacts_to_correct_num;
+        glm::vec2 correction = correction_value * contact.normal;
+        first->position -= correction * (first->inverse_mass / sum_inv_mass);
+        second->position += correction * (second->inverse_mass / sum_inv_mass);
+    }
+}
+
 void Manifold::DebugDraw(const Video::Camera& camera) const {
     Gfx::ColorMaterial red{glm::vec4{0, 1, 0, 1}};
     Gfx::ColorMaterial green{glm::vec4{1, 0, 0, 1}};
