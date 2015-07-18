@@ -36,10 +36,6 @@ void RigidBody::ApplyTorqueImpulse(float impulse) {
     angular_velocity += impulse * inverse_inertia;
 }
 
-void RigidBody::ApplyTorque(float torque) {
-    angular_velocity += torque * inverse_inertia;
-}
-
 void RigidBody::UpdateBounderCache() const {
     cache_bboxes.clear();
     for (auto& bbox : bboxes) {

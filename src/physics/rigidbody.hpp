@@ -46,7 +46,6 @@ public:
     void ApplyImpulse(glm::vec2 impulse, glm::vec2 contactVector);
 
     void ApplyTorqueImpulse(float impulse);
-    void ApplyTorque(float torque);
 
     void UpdateBounderCache() const;
 

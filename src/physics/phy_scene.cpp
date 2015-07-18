@@ -64,7 +64,6 @@ struct State { // generalized physics state
     glm::vec3 v;
 
     State() {};
-    State(glm::vec3 x, glm::vec3 v) : x(x), v(v) {};
     State(const PhysicsState& s)
         : x{s.position, s.orientation}
         , v{s.velocity, s.angular_velocity} {}
