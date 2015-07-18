@@ -8,6 +8,17 @@ namespace Math {
 constexpr float kEpsilon = 0.0001f;
 
 template<typename T>
+inline T Sgn(const T& value) {
+    if (std::abs(value) < kEpsilon) {
+        return 0;
+    } else if (0 < value) {
+        return 1;
+    } else {
+        return -1;
+    }
+}
+
+template<typename T>
 inline T Sqr(const T& value) {
     return value * value;
 }

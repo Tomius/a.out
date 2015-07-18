@@ -246,7 +246,15 @@ void Manifold::ApplyImpulse() {
         // Solve for the tangent vector
         glm::vec2 tangent = rv - glm::dot(rv, contact.normal) * contact.normal;
         float d = glm::dot(tangent, tangent);
-        if (d < 0.0001f) { continue; }
+        if (d < Math::kEpsilon) {
+            // If the relative velocity is along the normal, and at least
+            // one of the objects are rotating, then we have to apply rolling friction
+            // (notice that Math::Sgn(null vector) == 0)
+            float rf = std::sqrt(first->rolling_friction * second->rolling_friction);
+            first->ApplyTorqueImpulse(rf * -Math::Sgn(first->angular_velocity) * j);
+            second->ApplyTorqueImpulse(rf * -Math::Sgn(second->angular_velocity) * j);
+            continue;
+        }
         tangent /= std::sqrt(d);
 
         // Solve for magnitude to apply along the friction vector

@@ -21,6 +21,7 @@ public:
 
     float static_friction = 0.6f;
     float dynamic_friction = 0.5f;
+    float rolling_friction = 0.03f;
     float restitution = 0.4f;
 
     std::vector<OrientedBoundingBox> bboxes;
