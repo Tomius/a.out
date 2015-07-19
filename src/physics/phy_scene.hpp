@@ -17,6 +17,4 @@ private:
     std::vector<Manifold> manifolds;
 
     void DoStep(float dt);
-    void IntegrateForces(RigidBody* body, float dt);
-    void IntegrateVelocities(RigidBody* body, float dt);
 };

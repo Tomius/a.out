@@ -1,6 +1,8 @@
 #include "rigidbody.hpp"
 #include "math.hpp"
 
+glm::vec2 kGravity{0, -9.81f};
+
 void RigidBody::AddBounder(OrientedBoundingBox bbox) {
     bboxes.push_back(bbox);
 }
@@ -30,22 +32,8 @@ void RigidBody::ApplyImpulse(glm::vec2 impulse, glm::vec2 contactVector) {
     ApplyTorqueImpulse(Math::Cross2D(contactVector, impulse));
 }
 
-void RigidBody::ApplyForce(glm::vec2 force) {
-    acceleration += force * inverse_mass;
-}
-
-void RigidBody::ApplyForce(glm::vec2 force, glm::vec2 contactVector) {
-    ApplyForce(force);
-    ApplyTorque(Math::Cross2D(contactVector, force));
-}
-
-
 void RigidBody::ApplyTorqueImpulse(float impulse) {
     angular_velocity += impulse * inverse_inertia;
-}
-
-void RigidBody::ApplyTorque(float torque) {
-    angular_velocity += torque * inverse_inertia;
 }
 
 void RigidBody::UpdateBounderCache() const {
@@ -58,4 +46,12 @@ void RigidBody::UpdateBounderCache() const {
     for (auto& bcircle : bcircles) {
         cache_bcircles.emplace_back(*this, bcircle);
     }
+}
+
+glm::vec2 RigidBody::GetAcceleration(const PhysicsState& state) const {
+    return kGravity;
+}
+
+float RigidBody::GetAngularAcceleration(const PhysicsState& state) const {
+    return 0.0f;
 }
