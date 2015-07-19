@@ -40,7 +40,7 @@ public:
         };
     }
 
-    void Draw() override {
+    void Draw() const override {
         draw_func();
     }
 

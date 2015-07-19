@@ -17,7 +17,7 @@ public:
         bcircles.push_back({glm::vec2(), radius});
     }
 
-    void Draw() override {
+    void Draw() const override {
         Gfx::Circle::Draw(glm::vec2(), radius, Gfx::ColorMaterial{color},
                           GetScene().GetCamera().GetMatrix() * GetMatrix());
     }

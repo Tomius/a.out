@@ -43,7 +43,7 @@ public:
         PhyScene::Step(dt);
     }
 
-    void Draw() override {
+    void Draw() const override {
         Scene::Draw();
         PhyScene::DebugDraw(GetScene().GetCamera());
     }

@@ -27,7 +27,7 @@ public:
                           glm::vec2{+3*size/2, +size/2}});
     }
 
-    void Draw() override {
+    void Draw() const override {
         Gfx::Rectangle::Draw(
             {-size/2, +size/2, size, size},
             Gfx::ColorMaterial{color},

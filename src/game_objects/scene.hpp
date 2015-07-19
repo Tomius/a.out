@@ -20,7 +20,7 @@ class Scene : public GameObject
 public:
     Scene();
     void Step(float dt) override;
-    void Draw() override;
+    void Draw() const override;
 
     // Callbacks
     void ScreenResized(glm::ivec2 size) override;

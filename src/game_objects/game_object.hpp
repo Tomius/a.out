@@ -13,7 +13,8 @@ public:
     virtual ~GameObject() = 0;
 
     virtual void Step(float dt) {}
-    virtual void Draw() {}
+    virtual void Draw() const {}
+    virtual short GetDrawDepth() const { return 0; }
 
     // Callbacks
     virtual void ScreenResized(glm::ivec2 size) {}

@@ -1,3 +1,4 @@
+#include <queue>
 #include "game_objects/scene.hpp"
 #include "video/camera.hpp"
 
@@ -14,10 +15,26 @@ void Scene::Step(float dt)
         game_objects[i]->Step(dt);
 }
 
-void Scene::Draw()
+
+struct GameObjectCompare {
+    bool operator()(GameObjects::GameObject* lhs,
+                    GameObjects::GameObject* rhs) const {
+        return lhs->GetDrawDepth() < rhs->GetDrawDepth();
+    }
+};
+
+void Scene::Draw() const
 {
-    for (size_t i = 0; i < game_objects.size(); ++i)
-        game_objects[i]->Draw();
+    std::priority_queue<GameObjects::GameObject*,
+                        std::vector<GameObjects::GameObject*>,
+                        GameObjectCompare> queue;
+    for (size_t i = 0; i < game_objects.size(); ++i) {
+        queue.push(game_objects[i].get());
+    }
+    while(!queue.empty()) {
+        queue.top()->Draw();
+        queue.pop();
+    }
 }
 
 void Scene::ScreenResized(glm::ivec2 size)

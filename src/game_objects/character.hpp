@@ -12,8 +12,10 @@ namespace GameObjects
 
 class Character : public RandomBall {
 public:
-    Character() : RandomBall (glm::vec2{0, 1.0f}, 0.6f,
-                              glm::vec4{0.0f, 0.6f, 0.8f, 1.0f}) {
+    Character()
+            : RandomBall (glm::vec2{0, 1.0f}, 0.6f,
+                          glm::vec4{0.0f, 0.6f, 0.8f, 1.0f})
+            , texMatCross(0.75f) {
         texMat.GetTexture().Bind();
         texMat.GetTexture().LoadImage("ball.jpg");
         texMatCross.GetTexture().Bind();
@@ -65,11 +67,15 @@ public:
         aim = glm::normalize(aim * 0.5f + tmp);
     }
 
-     void Draw() override {
+    void Draw() const override {
         Gfx::Circle::Draw(glm::vec2(), radius, texMat,
                           GetScene().GetCamera().GetMatrix() * GetMatrix());
         Gfx::Circle::Draw(position + aim * 2.f, radius / 2, texMatCross,
                           Math::MoveForward() * GetScene().GetCamera().GetMatrix());
+    }
+
+    short GetDrawDepth() const override {
+        return -1;
     }
 
 private:
