@@ -3,6 +3,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#include "math.hpp"
 #include "random_ball.hpp"
 #include "gfx/material/texture_material.hpp"
 
@@ -55,7 +56,7 @@ public:
             ApplyImpulse({0.0f, 10.0f});
         }
     }
-    
+
     void MouseMoved(glm::dvec2 pos) override {
         glm::vec2 tmp = {pos.x / 300., -pos.y / 300.};
         if( acos(glm::dot(aim, tmp) / (glm::length(aim) * glm::length(tmp))) > 2 ) {
@@ -68,7 +69,7 @@ public:
         Gfx::Circle::Draw(glm::vec2(), radius, texMat,
                           GetScene().GetCamera().GetMatrix() * GetMatrix());
         Gfx::Circle::Draw(position + aim * 2.f, radius / 2, texMatCross,
-                          GetScene().GetCamera().GetMatrix());
+                          Math::MoveForward() * GetScene().GetCamera().GetMatrix());
     }
 
 private:

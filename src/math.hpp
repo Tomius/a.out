@@ -1,11 +1,25 @@
 #pragma once
 
+#include <climits>
 #include <glm/vec2.hpp>
 #include <glm/matrix.hpp>
 
 namespace Math {
 
 constexpr float kEpsilon = 0.0001f;
+
+inline glm::mat3 MoveForward(short num_layers = 1) {
+    float bias = float(num_layers) / SHRT_MAX;
+    return glm::mat3{
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1.0f-bias
+    };
+}
+
+inline glm::mat3 MoveBackward(short num_layers = 1) {
+    return MoveForward(-num_layers);
+}
 
 template<typename T>
 inline T Sgn(const T& value) {

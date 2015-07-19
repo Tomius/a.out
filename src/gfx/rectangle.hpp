@@ -65,7 +65,7 @@ private:
                   "    vec2 pos = position[gl_VertexID];\n"
                   "    texcoord = vec2(pos.x, 1 - pos.y);\n"
                   "    pos = bottom_left + size*pos;\n"
-                  "    gl_Position = vec4((mvp*vec3(pos,1)).xy, 0, 1);\n"
+                  "    gl_Position = vec4(mvp * vec3(pos, 1), 1);\n"
                   "}\n"
               },
               Gl::Shader{gl33::GL_FRAGMENT_SHADER,

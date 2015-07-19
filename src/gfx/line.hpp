@@ -55,8 +55,8 @@ private:
                               "void main()\n"
                               "{\n"
                               "    texCoord = gl_VertexID;\n"
-                              "    vec2 p = (mvp*vec3(pos[gl_VertexID],1)).xy;"
-                              "    gl_Position = vec4(p, 0, 1);\n"
+                              "    vec3 p = mvp * vec3(pos[gl_VertexID], 1);"
+                              "    gl_Position = vec4(p, 1);\n"
                               "}\n"
                           },
                           Gl::Shader{gl33::GL_FRAGMENT_SHADER,

@@ -28,6 +28,8 @@ int main(int argc, char** argv)
 
     glEnable (gl::GL_BLEND);
     glBlendFunc (gl::GL_SRC_ALPHA, gl::GL_ONE_MINUS_SRC_ALPHA);
+    glEnable (gl::GL_DEPTH_TEST);
+    glDepthFunc (gl::GL_LEQUAL);
 
     //Scenes::GfxTestScene scene;
     Scenes::MainScene scene;

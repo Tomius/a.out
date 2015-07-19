@@ -52,7 +52,7 @@ private:
                           "uniform mat3 mvp;\n"
                           "void main()\n"
                           "{\n"
-                          "    gl_Position = vec4((mvp*vec3(pos,1)).xy, 0, 1);\n"
+                          "    gl_Position = vec4(mvp * vec3(pos, 1), 1);\n"
                           "}\n"
                       },
                       Gl::Shader{gl33::GL_FRAGMENT_SHADER,

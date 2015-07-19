@@ -66,7 +66,7 @@ private:
                       "    vec2 position = data[gl_VertexID];\n"
                       "    texCoord = (vec2(position.x, -position.y)+1)/2;\n"
                       "    pos = center + radius*position;\n"
-                      "    gl_Position = vec4((mvp*vec3(pos,1)).xy, 0, 1);\n"
+                      "    gl_Position = vec4(mvp * vec3(pos, 1), 1);\n"
                       "}\n"
                   },
                   Gl::Shader{gl33::GL_FRAGMENT_SHADER,
@@ -82,6 +82,7 @@ private:
                       "    float dist = length(pos - center);\n"
                       "    float delta = 2*fwidth(dist);\n"
                       "    float alpha = smoothstep(radius-delta, radius, dist);\n"
+                      "    if (alpha == 1) discard;\n"
                       "    col = vec4(GetColor(texCoord).rgb, 1-alpha);\n"
                       "}"
                   },
