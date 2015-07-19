@@ -52,10 +52,14 @@ void Scene::MouseButtonPressed(int button, int action, int mods)
 
 void Scene::MouseMoved(glm::dvec2 pos)
 {
+    if(grabbingMouse) {
+        auto tmp = pos;
+        pos = pos - oldCursorPos;
+        oldCursorPos = tmp;
+    }
     for (size_t i = 0; i < game_objects.size(); ++i)
         game_objects[i]->MouseMoved(pos);
 }
-
 
 bool Scene::RemoveGameObject(GameObject* game_object)
 {
@@ -67,4 +71,13 @@ bool Scene::RemoveGameObject(GameObject* game_object)
     }
 
     return false;
+}
+
+void Scene::SetWindow(GLFWwindow* window) {
+    win = window;
+    if(grabbingMouse) {
+        double x, y;
+        glfwGetCursorPos(win, &x, &y);
+        oldCursorPos = {x, y};
+    }
 }

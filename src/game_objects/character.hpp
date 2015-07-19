@@ -15,6 +15,8 @@ public:
                               glm::vec4{0.0f, 0.6f, 0.8f, 1.0f}) {
         texMat.GetTexture().Bind();
         texMat.GetTexture().LoadImage("ball.jpg");
+        texMatCross.GetTexture().Bind();
+        texMatCross.GetTexture().LoadImage("crosshair.png");
     }
 
     void Step(float dt) override {
@@ -47,14 +49,25 @@ public:
             ApplyImpulse({0.0f, 10.0f});
         }
     }
+    
+    void MouseMoved(glm::dvec2 pos) override {
+        glm::vec2 tmp = {pos.x / 300., -pos.y / 300.};
+        if( acos(glm::dot(aim, tmp) / (glm::length(aim) * glm::length(tmp))) > 2 ) {
+            aim = glm::normalize(aim * 0.2f + tmp);
+        }
+        aim = glm::normalize(aim * 0.5f + tmp);
+    }
 
      void Draw() override {
         Gfx::Circle::Draw(glm::vec2(), radius, texMat,
                           GetScene().GetCamera().GetMatrix() * GetMatrix());
+        Gfx::Circle::Draw(position + aim * 2.f, radius / 2, texMatCross,
+                          GetScene().GetCamera().GetMatrix());
     }
 
 private:
-    Gfx::TextureMaterial texMat;
+    Gfx::TextureMaterial texMat, texMatCross;
+    glm::vec2 aim = {1, 0};
 };
 
 }

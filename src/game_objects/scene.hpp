@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include "game_objects/game_object.hpp"
+#include "video/window.hpp"
 
 class GLFWwindow;
 namespace Video
@@ -38,18 +39,20 @@ public:
     }
 
     bool RemoveGameObject(GameObject* game_object);
+    bool grabbingMouse = true;
 
     Video::Camera& GetCamera() { return camera; }
     const Video::Camera& GetCamera() const { return camera; }
 
     GLFWwindow* GetWindow() { return win; }
     const GLFWwindow* GetWindow() const { return win; }
-    void SetWindow(GLFWwindow* window) { win = window; }
+    void SetWindow(GLFWwindow* window);
 
 private:
     std::vector<std::unique_ptr<GameObject>> game_objects;
     Video::Camera& camera;
     GLFWwindow* win;
+    glm::dvec2 oldCursorPos;
 };
 
 }

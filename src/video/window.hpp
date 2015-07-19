@@ -18,6 +18,10 @@ public:
 
     bool IsClosing() const noexcept { return glfwWindowShouldClose(win); }
     void SetClosing(bool c) noexcept { glfwSetWindowShouldClose(win, c); }
+    
+    void HideCursor();
+    void ShowCursor();
+    bool GetCursorState();
 
     void SwapBuffers() noexcept { glfwSwapBuffers(win); glfwPollEvents(); }
 
@@ -38,6 +42,8 @@ private:
     static void EnsureGlfw() { static GlfwInitializer init; }
 
     void Init(int width, int height, GLFWmonitor* monitor, const char* title);
+
+    bool CursorEnabled = true;
 };
 
 }

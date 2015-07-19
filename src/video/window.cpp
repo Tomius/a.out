@@ -123,6 +123,7 @@ Window::Window(const char* title)
   glfwWindowHint(GLFW_REFRESH_RATE, vidmode->refreshRate);
 
   Init(vidmode->width, vidmode->height, monitor, title);
+  ShowCursor();
 }
 
 Window::Window(int width, int height, const char* title)
@@ -193,6 +194,10 @@ void Window::SetScene(GameObjects::Scene* scene)
     window2scene[win] = scene;
     scene->SetWindow(win);
     scene->ScreenResized(GetSize());
+    if(scene->grabbingMouse) { 
+        HideCursor();
+    }
+    else ShowCursor();
 }
 
 glm::ivec2 Window::GetSize() const {
@@ -203,6 +208,20 @@ glm::ivec2 Window::GetSize() const {
 
 void Window::SetSize(glm::ivec2 size) {
     glfwSetWindowSize(win, size.x, size.y);
+}
+
+void Window::HideCursor() {
+    CursorEnabled = false;
+    glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void Window::ShowCursor() {
+    CursorEnabled = true;
+    glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+bool Window::GetCursorState() {
+    return CursorEnabled;
 }
 
 static void err_cb(int, const char* err)
