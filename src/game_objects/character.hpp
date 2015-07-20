@@ -6,6 +6,7 @@
 #include "math.hpp"
 #include "random_ball.hpp"
 #include "gfx/material/texture_material.hpp"
+#include "gfx/simple_bitmap_font.hpp"
 
 namespace GameObjects
 {
@@ -15,7 +16,9 @@ public:
     Character()
             : RandomBall (glm::vec2{0, 1.0f}, 0.6f,
                           glm::vec4{0.0f, 0.6f, 0.8f, 1.0f})
-            , texMatCross(0.75f) {
+            , texMatCross(0.75f),
+              font{"font.png", .05,.1}
+    {
         texMat.GetTexture().Bind();
         texMat.GetTexture().LoadImage("ball.jpg");
         texMatCross.GetTexture().Bind();
@@ -72,6 +75,8 @@ public:
                           GetScene().GetCamera().GetMatrix() * GetMatrix());
         Gfx::Circle::Draw(position + aim * 2.f, radius / 2, texMatCross,
                           Math::MoveForward() * GetScene().GetCamera().GetMatrix());
+
+        font.Draw("Hp: 1/100", glm::vec2(-1,.9), Math::MoveForward());
     }
 
     short GetDrawDepth() const override {
@@ -81,6 +86,8 @@ public:
 private:
     Gfx::TextureMaterial texMat, texMatCross;
     glm::vec2 aim = {1, 0};
+
+    Gfx::SimpleBitmapFont font;
 };
 
 }

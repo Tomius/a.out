@@ -54,6 +54,7 @@ def build(bld):
         'src/gl/shader.cpp',
         'src/gl/texture.cpp',
         'src/game_objects/scene.cpp',
+        'src/gfx/simple_bitmap_font.cpp',
         'src/logger/cmdline.cpp',
         'src/logger/logger.cpp',
         'src/logger/putter.cpp',
