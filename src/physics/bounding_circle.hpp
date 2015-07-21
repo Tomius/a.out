@@ -11,7 +11,7 @@ public:
 };
 
 
-class CachedBoundingCircle : public BoundingCircle {
+class BoundingCircleSnapshot : public BoundingCircle {
 public:
-    CachedBoundingCircle(const RigidBody& rbody, const BoundingCircle& circle);
+    BoundingCircleSnapshot(const RigidBody& rbody, const BoundingCircle& circle);
 };

@@ -29,7 +29,7 @@ public:
                 Gfx::ColorMaterial{color});
         }
 
-        ground->bboxes.push_back({glm::vec2{-500, -1}, glm::vec2{500, 0}});
+        ground->bounder.boxes.push_back({glm::vec2{-500, -1}, glm::vec2{1000, 1}});
         AddRigidBody(ground.get());
 
         AddRigidBody(EmplaceGameObject<Character>());

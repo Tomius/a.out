@@ -14,7 +14,7 @@ public:
         inverse_mass = 1 / (M_PI * radius*radius);
         inverse_inertia = inverse_mass / (radius*radius);
         position = initial_pos;
-        bcircles.push_back({glm::vec2(), radius});
+        bounder.circles.push_back({glm::vec2(), radius});
     }
 
     void Draw() const override {

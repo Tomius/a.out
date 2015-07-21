@@ -7,17 +7,16 @@ class RigidBody;
 class OrientedBoundingBox {
 public:
     glm::vec2 min;
-    glm::vec2 max;
+    glm::vec2 extent;
     float orient = 0; // rotation around the min point
 };
 
 
-class CachedOrientedBoundingBox : public OrientedBoundingBox {
+class OrientedBoundingBoxSnapshot : public OrientedBoundingBox {
 public:
-    glm::vec2 extent;
     glm::vec2 points[4]; // min is 0, bottom right is 1
     glm::vec2 normals[2]; // 0 is "horizontal", both are towards max
 
-    CachedOrientedBoundingBox(const RigidBody& rbody,
-                              const OrientedBoundingBox& obb);
+    OrientedBoundingBoxSnapshot(const RigidBody& rbody,
+                                const OrientedBoundingBox& obb);
 };

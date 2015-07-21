@@ -16,15 +16,15 @@ public:
         inverse_inertia = inverse_mass; // todo
         position = initial_pos;
 
-        bboxes.push_back({glm::vec2{-size/2, size/2},
-                          glm::vec2{+size/2, 3*size/2}});
-        bboxes.push_back({glm::vec2{-size/2, -3*size/2},
-                          glm::vec2{+size/2, -size/2}});
+        bounder.boxes.push_back({glm::vec2{-size/2, size/2},
+                                 glm::vec2{size, size}});
+        bounder.boxes.push_back({glm::vec2{-size/2, -3*size/2},
+                                 glm::vec2{size, size}});
 
-        bboxes.push_back({glm::vec2{-3*size/2, -size/2},
-                          glm::vec2{-size/2, +size/2}});
-        bboxes.push_back({glm::vec2{+size/2, -size/2},
-                          glm::vec2{+3*size/2, +size/2}});
+        bounder.boxes.push_back({glm::vec2{-3*size/2, -size/2},
+                                 glm::vec2{size, size}});
+        bounder.boxes.push_back({glm::vec2{+size/2, -size/2},
+                                 glm::vec2{size, size}});
     }
 
     void Draw() const override {

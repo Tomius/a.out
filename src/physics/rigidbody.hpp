@@ -19,6 +19,16 @@ struct PhysicsState {
     float angular_velocity = 0;
 };
 
+struct ModelSpaceBounder {
+    std::vector<OrientedBoundingBox> boxes;
+    std::vector<BoundingCircle> circles;
+};
+
+struct WorldSpaceBounderSnapshot {
+    std::vector<OrientedBoundingBoxSnapshot> boxes;
+    std::vector<BoundingCircleSnapshot> circles;
+};
+
 class RigidBody : public PhysicsState {
 public:
     float inverse_mass = 0; // infitine mass == environment
@@ -29,11 +39,8 @@ public:
     float rolling_friction = 0.03f;
     float restitution = 0.4f;
 
-    std::vector<OrientedBoundingBox> bboxes;
-    std::vector<BoundingCircle> bcircles;
-
-    mutable std::vector<CachedOrientedBoundingBox> cache_bboxes;
-    mutable std::vector<CachedBoundingCircle> cache_bcircles;
+    ModelSpaceBounder bounder;
+    mutable WorldSpaceBounderSnapshot bounder_snapshot;
 
 public:
     virtual ~RigidBody() {}

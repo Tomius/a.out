@@ -9,8 +9,8 @@
 #include "gfx/material/color_material.hpp"
 
 static void Collide(std::vector<Contact>& contacts,
-                    const CachedBoundingCircle& a,
-                    const CachedBoundingCircle& b) {
+                    const BoundingCircleSnapshot& a,
+                    const BoundingCircleSnapshot& b) {
     // Vector from a to b
     glm::vec2 n = b.center - a.center;
 
@@ -35,14 +35,14 @@ static void Collide(std::vector<Contact>& contacts,
     } else { // Circles are on same position
         // Choose random (but consistent) values
         contact.penetration = a.radius;
-        contact.normal = glm::vec2(1, 0);
+        contact.normal = glm::vec2{1, 0};
         contact.position = a.center;
     }
 }
 
 static void CollideOneWay(std::vector<Contact>& contacts,
-                          const CachedOrientedBoundingBox& a,
-                          const CachedOrientedBoundingBox& b,
+                          const OrientedBoundingBoxSnapshot& a,
+                          const OrientedBoundingBoxSnapshot& b,
                           bool flip_normals) {
     // half extent
     glm::vec2 half_extent = a.extent / 2.0f;
@@ -80,15 +80,15 @@ static void CollideOneWay(std::vector<Contact>& contacts,
 }
 
 static void Collide(std::vector<Contact>& contacts,
-                    const CachedOrientedBoundingBox& a,
-                    const CachedOrientedBoundingBox& b) {
+                    const OrientedBoundingBoxSnapshot& a,
+                    const OrientedBoundingBoxSnapshot& b) {
     CollideOneWay(contacts, a, b, false);
     CollideOneWay(contacts, b, a, true);
 }
 
 static void Collide(std::vector<Contact>& contacts,
-                    const CachedOrientedBoundingBox& a,
-                    const CachedBoundingCircle& b,
+                    const OrientedBoundingBoxSnapshot& a,
+                    const BoundingCircleSnapshot& b,
                     bool flip_normals = false) {
 
     // rotate the "world", so that a becomes an AABB
@@ -97,18 +97,16 @@ static void Collide(std::vector<Contact>& contacts,
     // precull
     if (b_rot_center.x < a.min.x - b.radius ||
         b_rot_center.y < a.min.y - b.radius ||
-        b_rot_center.x > a.max.x + b.radius ||
-        b_rot_center.y > a.max.y + b.radius) {
+        b_rot_center.x > a.min.x + a.extent.x + b.radius ||
+        b_rot_center.y > a.min.y + a.extent.y + b.radius) {
         return;
     }
 
-    glm::vec2 a_pos = (a.min + a.max) / 2.0f;
+    glm::vec2 half_extent = a.extent / 2.0f;
+    glm::vec2 a_center = a.min + half_extent;
 
     // Vector from a to b;
-    glm::vec2 n = b_rot_center - a_pos;
-
-    // Calculate half extents along each axis
-    glm::vec2 half_extent = a.extent / 2.0f;
+    glm::vec2 n = b_rot_center - a_center;
 
     // Closest point on the box to center of the circle
     // (Clamp direction vector to edges of the AABB)
@@ -150,9 +148,15 @@ static void Collide(std::vector<Contact>& contacts,
 
     contacts.emplace_back();
     Contact& contact = contacts.back();
-    // Collision normal needs to be flipped to point
-    // outside if circle is inside the AABB
-    contact.normal = (inside ? -normal : normal) / d;
+    if (d < Math::kEpsilon) {
+        // if normal is nullvector, pick a random, but consistent one
+        contact.normal = glm::vec2{1, 0};
+        d = 1;
+    } else {
+        // Collision normal needs to be flipped to point
+        // outside if circle is inside the AABB
+        contact.normal = (inside ? -normal : normal) / d;
+    }
 
     // rotate the "world" back
     contact.normal = Math::Rotate(contact.normal, a.orient);
@@ -167,8 +171,8 @@ static void Collide(std::vector<Contact>& contacts,
 }
 
 static void Collide(std::vector<Contact>& contacts,
-                    const CachedBoundingCircle& a,
-                    const CachedOrientedBoundingBox& b) {
+                    const BoundingCircleSnapshot& a,
+                    const OrientedBoundingBoxSnapshot& b) {
     Collide(contacts, b, a, true);
 }
 
@@ -178,19 +182,19 @@ Manifold::Manifold(RigidBody* a, RigidBody* b)
         return;
     }
 
-    for (auto& x : a->cache_bcircles) {
-        for (auto& y : b->cache_bcircles) {
+    for (auto& x : a->bounder_snapshot.circles) {
+        for (auto& y : b->bounder_snapshot.circles) {
             Collide(contacts, x, y);
         }
-        for(auto& y : b->cache_bboxes) {
+        for(auto& y : b->bounder_snapshot.boxes) {
             Collide(contacts, x, y);
         }
     }
-    for(auto& x : a->cache_bboxes) {
-        for (auto& y : b->cache_bcircles) {
+    for(auto& x : a->bounder_snapshot.boxes) {
+        for (auto& y : b->bounder_snapshot.circles) {
             Collide(contacts, x, y);
         }
-        for(auto& y : b->cache_bboxes) {
+        for(auto& y : b->bounder_snapshot.boxes) {
             Collide(contacts, x, y);
         }
     }

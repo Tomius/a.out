@@ -4,14 +4,13 @@
 #include "math.hpp"
 
 
-CachedOrientedBoundingBox::CachedOrientedBoundingBox(const RigidBody& rbody,
-                                                     const OrientedBoundingBox& obb)
+OrientedBoundingBoxSnapshot::OrientedBoundingBoxSnapshot(const RigidBody& rbody,
+                                                         const OrientedBoundingBox& obb)
 
 {
     orient = obb.orient + rbody.orientation;
     min = Math::Rotate(obb.min, rbody.orientation) + rbody.position;
-    extent = obb.max - obb.min;
-    max = min + extent;
+    extent = obb.extent;
 
     points[0] = min;
     points[1] = min + Math::Rotate(glm::vec2{extent.x, 0}, orient);

@@ -4,11 +4,11 @@
 glm::vec2 kGravity{0, -9.81f};
 
 void RigidBody::AddBounder(OrientedBoundingBox bbox) {
-    bboxes.push_back(bbox);
+    bounder.boxes.push_back(bbox);
 }
 
 void RigidBody::AddBounder(BoundingCircle bcircle) {
-    bcircles.push_back(bcircle);
+    bounder.circles.push_back(bcircle);
 }
 
 glm::mat3 RigidBody::GetMatrix() const {
@@ -37,14 +37,14 @@ void RigidBody::ApplyTorqueImpulse(float impulse) {
 }
 
 void RigidBody::UpdateBounderCache() const {
-    cache_bboxes.clear();
-    for (auto& bbox : bboxes) {
-        cache_bboxes.emplace_back(*this, bbox);
+    bounder_snapshot = WorldSpaceBounderSnapshot();
+
+    for (auto& bbox : bounder.boxes) {
+        bounder_snapshot.boxes.emplace_back(*this, bbox);
     }
 
-    cache_bcircles.clear();
-    for (auto& bcircle : bcircles) {
-        cache_bcircles.emplace_back(*this, bcircle);
+    for (auto& bcircle : bounder.circles) {
+        bounder_snapshot.circles.emplace_back(*this, bcircle);
     }
 }
 
