@@ -9,7 +9,7 @@ glm::mat3 Camera::GetMatrix() const {
     // mat3 ctor is column major!
     return glm::mat3{1/half_size.x,          0,                     0,
                      0,                      1/half_size.y,         0,
-                     -lookAt.x/half_size.x,  -lookAt.y/half_size.y, 0.5f};
+                     -lookAt.x/half_size.x,  -lookAt.y/half_size.y, 1};
 }
 
 Rect<float> Camera::GetViewport() const {

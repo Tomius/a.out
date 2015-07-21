@@ -27,7 +27,7 @@ private:
     class LineImpl {
     public:
         static void Draw(glm::vec2 coord1, glm::vec2 coord2,
-                         const Material& material, const glm::mat3& mvp)
+                         const Material& material, glm::mat3 mvp)
         {
             auto& inst = GetInstance();
             inst.program.Use();
@@ -35,6 +35,7 @@ private:
             material.Update(inst.program);
             gl33::glUniform2fv(inst.uloc_pos0, 1, glm::value_ptr(coord1));
             gl33::glUniform2fv(inst.uloc_pos1, 1, glm::value_ptr(coord2));
+            mvp[2][2] /= 2.0f; // set default depth to 0.5
             gl33::glUniformMatrix3fv(inst.uloc_mvp, 1,
                                      gl33::GL_FALSE, glm::value_ptr(mvp));
             gl33::glDrawArrays(gl33::GL_LINES, 0, 2);

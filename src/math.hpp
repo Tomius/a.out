@@ -17,8 +17,24 @@ inline glm::mat3 MoveForward(short num_layers = 1) {
     };
 }
 
+inline glm::mat3 MoveForwardMax() {
+    return glm::mat3{
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 0
+    };
+}
+
 inline glm::mat3 MoveBackward(short num_layers = 1) {
     return MoveForward(-num_layers);
+}
+
+inline glm::mat3 MoveBackwardMax() {
+    return glm::mat3{
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 2
+    };
 }
 
 template<typename T>

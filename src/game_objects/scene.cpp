@@ -19,7 +19,7 @@ void Scene::Step(float dt)
 struct GameObjectCompare {
     bool operator()(GameObjects::GameObject* lhs,
                     GameObjects::GameObject* rhs) const {
-        return lhs->GetDrawDepth() < rhs->GetDrawDepth();
+        return lhs->GetDrawPriority() < rhs->GetDrawPriority();
     }
 };
 

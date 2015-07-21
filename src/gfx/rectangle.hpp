@@ -27,7 +27,7 @@ private:
     {
     public:
         static void Draw(Rect<float> rect, const Material& material,
-                         const glm::mat3& mvp)
+                         glm::mat3 mvp)
         {
             auto& inst = GetInstance();
             inst.program.Use();
@@ -35,6 +35,7 @@ private:
             material.Update(inst.program);
             gl33::glUniform2fv(inst.uloc_bottom_left, 1, &rect.x);
             gl33::glUniform2fv(inst.uloc_size, 1, &rect.width);
+            mvp[2][2] /= 2.0f; // set default depth to 0.5
             gl33::glUniformMatrix3fv(inst.uloc_mvp, 1,
                                      gl33::GL_FALSE, glm::value_ptr(mvp));
             gl33::glDrawArrays(gl33::GL_TRIANGLE_FAN, 0, 4);

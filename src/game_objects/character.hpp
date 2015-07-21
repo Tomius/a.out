@@ -76,10 +76,10 @@ public:
         Gfx::Circle::Draw(position + aim * 2.f, radius / 2, texMatCross,
                           Math::MoveForward() * GetScene().GetCamera().GetMatrix());
 
-        font.Draw("Hp: 1/100", glm::vec2(-1,.9), Math::MoveForward());
+        font.Draw("Hp: 1/100", glm::vec2(-1,.9), Math::MoveForwardMax());
     }
 
-    short GetDrawDepth() const override {
+    short GetDrawPriority() const override {
         return -1;
     }
 

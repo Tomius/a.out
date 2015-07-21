@@ -11,9 +11,9 @@ class SpriteMaterial
 {
 public:
     SpriteMaterial(Rect<float> rect)
-        : rect{rect} {}
+        : rect(rect) {}
     SpriteMaterial(Gl::Texture&& tex, Rect<float> rect)
-        : tex{std::move(tex)}, rect{rect} {}
+        : tex{std::move(tex)}, rect(rect) {}
 
     static const Gl::Shader& GetShader()
     {

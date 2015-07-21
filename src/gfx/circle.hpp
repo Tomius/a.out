@@ -27,7 +27,7 @@ private:
     class CircleImpl {
     public:
         static void Draw(glm::vec2 center, float radius,
-                         const Material& material, const glm::mat3& mvp)
+                         const Material& material, glm::mat3 mvp)
         {
             auto& inst = GetInstance();
             inst.program.Use();
@@ -35,6 +35,7 @@ private:
             material.Update(inst.program);
             gl33::glUniform2fv(inst.uloc_center, 1, glm::value_ptr(center));
             gl33::glUniform1f(inst.uloc_radius, radius);
+            mvp[2][2] /= 2.0f; // set default depth to 0.5
             gl33::glUniformMatrix3fv(inst.uloc_mvp, 1,
                                      gl33::GL_FALSE, glm::value_ptr(mvp));
             gl33::glDrawArrays(gl33::GL_TRIANGLE_FAN, 0, 4);

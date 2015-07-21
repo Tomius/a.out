@@ -26,13 +26,14 @@ private:
     class PixelImpl {
     public:
         static void Draw(glm::vec2 coord, const Material& material,
-                         const glm::mat3& mvp)
+                         glm::mat3 mvp)
         {
             auto& inst = GetInstance();
             inst.program.Use();
             inst.vao.Bind();
             material.Update(inst.program);
             gl33::glUniform2fv(inst.uloc_pos, 1, glm::value_ptr(coord));
+            mvp[2][2] /= 2.0f; // set default depth to 0.5
             gl33::glUniformMatrix3fv(inst.uloc_mvp, 1,
                                      gl33::GL_FALSE, glm::value_ptr(mvp));
             gl33::glDrawArrays(gl33::GL_POINTS, 0, 1);
