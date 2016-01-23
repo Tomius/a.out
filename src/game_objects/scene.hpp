@@ -33,7 +33,7 @@ public:
     template <typename T, typename... Args>
     T* EmplaceGameObject(Args&&... args)
     {
-        T* ptr = new T{std::forward<Args>(args)...};
+        T* ptr = new T(std::forward<Args>(args)...);
         ptr->scene = this;
         game_objects.emplace_back(ptr);
         return ptr;

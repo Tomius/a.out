@@ -19,6 +19,7 @@ def configure(cfg):
 
     cfg.check_cxx(cxxflags='-std=c++14')
     cfg.env.append_value('CXXFLAGS', ['-std=c++14'])
+    cfg.env.append_value('LINKFLAGS', ['-std=c++14'])
     cfg.env.append_value('CXXFLAGS', cfg.filter_flags([
         '-fcolor-diagnostics', '-Wall', '-Wextra', '-Wno-unused-parameter',
         '-Wno-dangling-else', '-pedantic', '-Wdocumentation']))
@@ -64,9 +65,11 @@ def build(bld):
         'src/video/window.cpp',
         'src/physics/bounding_box.cpp',
         'src/physics/bounding_circle.cpp',
+        'src/physics/collision.cpp',
         'src/physics/rigidbody.cpp',
         'src/physics/manifold.cpp',
-        'src/physics/phy_scene.cpp',
+        'src/physics/physics_scene.cpp',
+        'src/physics/r4k.cpp',
     ]
 
     x = VersionTask(env=bld.env)

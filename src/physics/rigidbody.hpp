@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <iostream>
 #include <glm/vec2.hpp>
 #include <glm/matrix.hpp>
 #include "bounding_box.hpp"
@@ -9,6 +10,7 @@
 
 extern glm::vec2 kGravity;
 
+class PhysicsScene;
 struct GenereralizedPhysicsState;
 
 struct PhysicsState {
@@ -27,6 +29,8 @@ struct ModelSpaceBounder {
 struct WorldSpaceBounderSnapshot {
     std::vector<OrientedBoundingBoxSnapshot> boxes;
     std::vector<BoundingCircleSnapshot> circles;
+
+    BoundingBox aabb;
 };
 
 class RigidBody : public PhysicsState {
@@ -41,6 +45,8 @@ public:
 
     ModelSpaceBounder bounder;
     mutable WorldSpaceBounderSnapshot bounder_snapshot;
+
+    void UpdateAabb () const;
 
 public:
     virtual ~RigidBody() {}
@@ -61,4 +67,11 @@ public:
 
     glm::vec2 GetAcceleration() const { return GetAcceleration(*this); }
     float GetAngularAcceleration() const { return GetAngularAcceleration(*this); }
+
+    PhysicsScene& GetPhysicsScene() { return *physics_scene; }
+    PhysicsScene const& GetPhysicsScene() const { return *physics_scene; }
+
+private:
+    friend class PhysicsScene;
+    PhysicsScene* physics_scene = nullptr;
 };

@@ -7,6 +7,7 @@
 #include "random_ball.hpp"
 #include "gfx/material/texture_material.hpp"
 #include "gfx/simple_bitmap_font.hpp"
+#include "physics/physics_scene.hpp"
 
 namespace GameObjects
 {
@@ -27,8 +28,25 @@ public:
 
     void Step(float dt) override {
         RandomBall::Step(dt);
-
         GetScene().GetCamera().viewport_center = position;
+
+        rayContact = GetPhysicsScene().CollideRay({position, aim},
+            [this](RigidBody* rb) -> bool { return rb != this; });
+
+        if (IsValidRayContact(rayContact) && rayContact.r < forceDist) {
+            glm::vec2 dirToOther = glm::normalize(rayContact.r * aim);
+            bool push = glfwGetMouseButton(GetScene().GetWindow(), GLFW_MOUSE_BUTTON_1) == GLFW_PRESS;
+            bool pull = glfwGetMouseButton(GetScene().GetWindow(), GLFW_MOUSE_BUTTON_2) == GLFW_PRESS;
+
+            if (push && !pull) {
+                ApplyImpulse(forcePower * -dirToOther);
+                rayContact.body->ApplyImpulse(forcePower * dirToOther);
+            } else if (pull && !push) {
+                ApplyImpulse(forcePower * dirToOther);
+                rayContact.body->ApplyImpulse(forcePower * -dirToOther);
+            }
+
+        }
     }
 
     glm::vec2 GetAcceleration(const PhysicsState& state) const override {
@@ -75,8 +93,14 @@ public:
                           GetScene().GetCamera().GetMatrix() * GetMatrix());
         Gfx::Circle::Draw(position + aim * 2.f, radius / 2, texMatCross,
                           Math::MoveForward() * GetScene().GetCamera().GetMatrix());
-
         font.Draw("Hp: 1/100", glm::vec2(-1,.9), Math::MoveForwardMax());
+
+        if (IsValidRayContact(rayContact) && rayContact.r < forceDist) {
+            Gfx::Line::Draw(position + 0.6f * aim,
+                            position + rayContact.r * aim,
+                            Gfx::ColorMaterial{glm::vec4{0, 1, 0, 1}},
+                            Math::MoveForward() * GetScene().GetCamera().GetMatrix());
+        }
     }
 
     short GetDrawPriority() const override {
@@ -88,6 +112,9 @@ private:
     glm::vec2 aim = {1, 0};
 
     Gfx::SimpleBitmapFont font;
+    mutable RayContact rayContact;
+    float forceDist = 4.0;
+    float forcePower = 0.2;
 };
 
 }

@@ -46,6 +46,24 @@ void RigidBody::UpdateBounderCache() const {
     for (auto& bcircle : bounder.circles) {
         bounder_snapshot.circles.emplace_back(*this, bcircle);
     }
+
+    UpdateAabb();
+}
+
+void RigidBody::UpdateAabb () const {
+    glm::vec2& min = bounder_snapshot.aabb.min;
+    glm::vec2& max = bounder_snapshot.aabb.max;
+
+    min = max = position;
+    for (auto& box : bounder_snapshot.boxes) {
+        min = glm::min(min, box.min);
+        max = glm::max(max, box.min + box.extent);
+    }
+
+     for (auto& circle : bounder_snapshot.circles) {
+        min = glm::min(min, circle.center - glm::vec2(circle.radius));
+        max = glm::max(max, circle.center + glm::vec2(circle.radius));
+    }
 }
 
 glm::vec2 RigidBody::GetAcceleration(const PhysicsState& state) const {

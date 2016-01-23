@@ -3,7 +3,6 @@
 #include "rigidbody.hpp"
 #include "math.hpp"
 
-
 OrientedBoundingBoxSnapshot::OrientedBoundingBoxSnapshot(const RigidBody& rbody,
                                                          const OrientedBoundingBox& obb)
 
@@ -14,9 +13,9 @@ OrientedBoundingBoxSnapshot::OrientedBoundingBoxSnapshot(const RigidBody& rbody,
 
     points[0] = min;
     points[1] = min + Math::Rotate(glm::vec2{extent.x, 0}, orient);
-    points[2] = min + Math::Rotate(glm::vec2{0, extent.y}, orient);
-    points[3] = min + Math::Rotate(extent, orient);
+    points[2] = min + Math::Rotate(extent, orient);
+    points[3] = min + Math::Rotate(glm::vec2{0, extent.y}, orient);
 
     normals[0] = glm::normalize(points[1] - points[0]);
-    normals[1] = glm::normalize(points[2] - points[0]);
+    normals[1] = glm::normalize(points[3] - points[0]);
 }

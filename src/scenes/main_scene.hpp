@@ -6,13 +6,13 @@
 #include "game_objects/random_stuff.hpp"
 
 #include "gfx/material/color_material.hpp"
-#include "physics/phy_scene.hpp"
+#include "physics/physics_scene.hpp"
 
 
 namespace Scenes
 {
 
-class MainScene : public GameObjects::Scene, public PhyScene
+class MainScene : public GameObjects::Scene, public PhysicsScene
 {
 public:
     MainScene() : ground(new RigidBody()) {
@@ -36,16 +36,20 @@ public:
         AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{3.0f, 3.0f}, 1.2f));
         AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{-4.0f, 4.0f}, 0.3f));
         AddRigidBody(EmplaceGameObject<RandomStuff>(glm::vec2{-6.0f, 2.0f}, 0.5f));
+
+        for (int i = 0; i < 24; ++i) {
+            AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{rand()%24-12, rand()%10+1}, (rand()%10)/20.0f));
+        }
     }
 
     void Step(float dt) override {
         Scene::Step(dt);
-        PhyScene::Step(dt);
+        PhysicsScene::Step(dt);
     }
 
     void Draw() const override {
         Scene::Draw();
-        PhyScene::DebugDraw(GetScene().GetCamera());
+        PhysicsScene::DebugDraw(GetScene().GetCamera());
     }
 private:
     std::unique_ptr<RigidBody> ground;

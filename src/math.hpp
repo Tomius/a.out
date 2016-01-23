@@ -8,6 +8,11 @@ namespace Math {
 
 constexpr float kEpsilon = 0.0001f;
 
+template<typename T>
+constexpr bool EqualsWithEpsilon(const T& a, const T& b) {
+    return std::abs(a - b) < kEpsilon;
+}
+
 inline glm::mat3 MoveForward(short num_layers = 1) {
     float bias = float(num_layers) / SHRT_MAX;
     return glm::mat3{
@@ -73,6 +78,29 @@ inline glm::vec2 Rotate(glm::vec2 vector, float angle) {
 
 inline glm::vec2 Rotate(glm::vec2 vector, glm::vec2 pivot, float angle) {
     return Rotate(vector - pivot, angle) + pivot;
+}
+
+struct QuadraticSolitions {
+    float roots[2]{};
+    size_t num_roots = 0;
+};
+
+inline QuadraticSolitions SolveQuadratic (float a, float b, float c) {
+    QuadraticSolitions solutions{};
+
+    float det = b*b - 4*a*c;
+    if (det < 0) {
+        solutions.num_roots = 0;
+    } else if (det == 0.0) {
+        solutions.roots[0] = -b / (2*a);
+        solutions.num_roots = 1;
+    } else {
+        solutions.roots[0] = (-b + sqrt(det)) / (2*a);
+        solutions.roots[1] = (-b - sqrt(det)) / (2*a);
+        solutions.num_roots = 2;
+    }
+
+    return solutions;
 }
 
 }
