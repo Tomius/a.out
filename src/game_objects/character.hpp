@@ -35,8 +35,8 @@ public:
 
         if (IsValidRayContact(rayContact) && rayContact.r < forceDist) {
             glm::vec2 dirToOther = glm::normalize(rayContact.r * aim);
-            bool push = glfwGetMouseButton(GetScene().GetWindow(), GLFW_MOUSE_BUTTON_1) == GLFW_PRESS;
-            bool pull = glfwGetMouseButton(GetScene().GetWindow(), GLFW_MOUSE_BUTTON_2) == GLFW_PRESS;
+            push = glfwGetMouseButton(GetScene().GetWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+            pull = glfwGetMouseButton(GetScene().GetWindow(), GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
 
             if (push && !pull) {
                 ApplyImpulse(forcePower * -dirToOther);
@@ -96,9 +96,15 @@ public:
         font.Draw("Hp: 1/100", glm::vec2(-1,.9), Math::MoveForwardMax());
 
         if (IsValidRayContact(rayContact) && rayContact.r < forceDist) {
+            glm::vec4 color{1, 1, 1, 0.25};
+            if (pull && !push) {
+                color = glm::vec4{0, 1, 0, 1};
+            } else if (push && !pull) {
+                color = glm::vec4{1, 0, 0, 1};
+            }
             Gfx::Line::Draw(position + 0.6f * aim,
                             position + rayContact.r * aim,
-                            Gfx::ColorMaterial{glm::vec4{0, 1, 0, 1}},
+                            Gfx::ColorMaterial{color},
                             Math::MoveForward() * GetScene().GetCamera().GetMatrix());
         }
     }
@@ -108,12 +114,13 @@ public:
     }
 
 private:
+    bool pull = false, push = false;
     Gfx::TextureMaterial texMat, texMatCross;
     glm::vec2 aim = {1, 0};
 
     Gfx::SimpleBitmapFont font;
     mutable RayContact rayContact;
-    float forceDist = 4.0;
+    float forceDist = 5.0;
     float forcePower = 0.2;
 };
 

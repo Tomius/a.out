@@ -20,26 +20,38 @@ public:
         GetCamera().viewport_center = glm::vec2{0, 1};
         GetCamera().viewport_size = 10;
 
-        for (int i = -500; i < +500; i++) {
+        // ground
+        for (int i = -250; i < +250; i++) {
             glm::vec4 color = glm::vec4(0.3f, 0.65f, 0.2f, 1.0f);
             if (i%2) { color *= 0.75f; }
 
             EmplaceGameObject<StaticRectangle>(
-                Rect<float>{(float)i, 0, 1, -1},
+                Rect<float>{(float)i, -1, 1, 1},
                 Gfx::ColorMaterial{color});
         }
+        // side walls
+        EmplaceGameObject<StaticRectangle>(
+            Rect<float>{-250, -1, 1, 51},
+            Gfx::ColorMaterial{glm::vec4{1, 1, 1, 1}});
+        EmplaceGameObject<StaticRectangle>(
+            Rect<float>{249, -1, 1, 51},
+            Gfx::ColorMaterial{glm::vec4{1, 1, 1, 1}});
 
-        ground->bounder.boxes.push_back({glm::vec2{-500, -1}, glm::vec2{1000, 1}});
+        ground->bounder.boxes.push_back({glm::vec2{-250, -1}, glm::vec2{500, 1}});
+        ground->bounder.boxes.push_back({glm::vec2{-250, -1}, glm::vec2{1, 51}});
+        ground->bounder.boxes.push_back({glm::vec2{249, -1}, glm::vec2{1, 51}});
         AddRigidBody(ground.get());
+
+
 
         AddRigidBody(EmplaceGameObject<Character>());
         AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{3.0f, 3.0f}, 1.2f));
         AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{-4.0f, 4.0f}, 0.3f));
         AddRigidBody(EmplaceGameObject<RandomStuff>(glm::vec2{-6.0f, 2.0f}, 0.5f));
 
-        for (int i = 0; i < 24; ++i) {
-            AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{rand()%24-12, rand()%10+1}, (rand()%10)/20.0f));
-        }
+        // for (int i = 0; i < 24; ++i) {
+        //     AddRigidBody(EmplaceGameObject<RandomBall>(glm::vec2{rand()%24-12, rand()%10+1}, (rand()%10)/20.0f));
+        // }
     }
 
     void Step(float dt) override {
